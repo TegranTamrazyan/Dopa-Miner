@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'wordle.dart';
+import 'flappy.dart';
+import 'cookie.dart';
+import 'leaderboard.dart';
+import 'profile.dart';
+import 'home.dart';
+
 
 
 void main(){
@@ -28,21 +35,18 @@ class _buildPageState extends State<buildPage> {
   int _selectedIndex = 0;
 
   static List<Widget> _widgetOptions = <Widget>[
-    Text("Profile ", style: TextStyle(fontSize: 27),),
-    Text("Leaderboard ", style: TextStyle(fontSize: 27),),
-    Text("Home ", style: TextStyle(fontSize: 27),),
-    Text("Flappy Bird ", style: TextStyle(fontSize: 27),),
-    Text("Wordle ", style: TextStyle(fontSize: 27),),
-    Text("Cookie Clicker ", style: TextStyle(fontSize: 27),)
+    profilePage(),
+    leaderboardPage(),
+    homePage(),
+    flappyPage(),
+    wordlePage(),
+    cookiePage()
   ];
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Game"),
-      ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex)
       ),
@@ -64,12 +68,12 @@ class _buildPageState extends State<buildPage> {
               backgroundColor: Colors.blueAccent
           ),
           BottomNavigationBarItem(
-              icon: Image.asset("./assets/flappy.png"),
+              icon: Image.asset("./assets/flappy.png", width: 40, height: 40,),
               label: "",
               backgroundColor: Colors.blueAccent
           ),
           BottomNavigationBarItem(
-              icon: Image.asset("./assets/wordle.png"),
+              icon: Image.asset("./assets/wordle.png", width: 40, height: 40,),
               label: "",
               backgroundColor: Colors.blueAccent
           ),
@@ -82,7 +86,7 @@ class _buildPageState extends State<buildPage> {
         elevation: 0,
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.black,
-        iconSize: 20,
+        iconSize: 40,
         onTap: _onItemTapped,
       ),
     );
