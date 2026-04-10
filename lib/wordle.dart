@@ -12,7 +12,6 @@ class _wordlePageState extends State<wordlePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -26,7 +25,7 @@ class _wordlePageState extends State<wordlePage> {
               child: createAllBoxes(),
             ),
             SizedBox(
-              height: 25,
+              height: 85,
             ),
             Container(
               child: createAllKeyboardLetterBoxes(),
@@ -162,8 +161,8 @@ class _wordlePageState extends State<wordlePage> {
 
   Container createKeyboardLetterBox(String letter){
     return Container(
-      width: 35,
-      height: 35,
+      width: 36,
+      height: 36,
       decoration: BoxDecoration(
         border: Border.all(
           color: Colors.black,
@@ -172,13 +171,17 @@ class _wordlePageState extends State<wordlePage> {
         ),
       ),
       child: ElevatedButton(
+
         style: ElevatedButton.styleFrom(
-          shadowColor: Colors.transparent
+            padding: EdgeInsets.zero,
+          shadowColor: Colors.transparent,
+            overlayColor: Colors.transparent,
+            splashFactory: NoSplash.splashFactory
         ),
         onPressed: () {
 
         },
-        child: Text(letter, style: TextStyle(fontSize: 17),),
+        child: Text(letter, style: TextStyle(fontSize: 21, color: Colors.black,),),
       ),
     );
   }
@@ -212,7 +215,7 @@ class _wordlePageState extends State<wordlePage> {
             ],
           ),
           SizedBox(
-            height: 5,
+            height: 13,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -237,7 +240,7 @@ class _wordlePageState extends State<wordlePage> {
             ],
           ),
           SizedBox(
-            height: 5,
+            height: 13,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
