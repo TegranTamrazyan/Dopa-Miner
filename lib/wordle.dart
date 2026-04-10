@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -51,6 +53,8 @@ class _wordlePageState extends State<wordlePage> {
   }
 
   Container createAllBoxes(){
+
+
     return Container(
       child: Column(
         children: [
@@ -58,7 +62,7 @@ class _wordlePageState extends State<wordlePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              createBox(1),
+              createBox(1,),
               SizedBox(width: 5,),
               createBox(2),
               SizedBox(width: 5,),
@@ -193,25 +197,25 @@ class _wordlePageState extends State<wordlePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              createKeyboardLetterBox("q"),
+              createKeyboardLetterBox("Q"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("w"),
+              createKeyboardLetterBox("W"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("e"),
+              createKeyboardLetterBox("E"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("r"),
+              createKeyboardLetterBox("R"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("t"),
+              createKeyboardLetterBox("T"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("y"),
+              createKeyboardLetterBox("Y"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("u"),
+              createKeyboardLetterBox("U"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("i"),
+              createKeyboardLetterBox("I"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("o"),
+              createKeyboardLetterBox("O"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("p"),
+              createKeyboardLetterBox("P"),
             ],
           ),
           SizedBox(
@@ -220,23 +224,23 @@ class _wordlePageState extends State<wordlePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              createKeyboardLetterBox("a"),
+              createKeyboardLetterBox("A"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("s"),
+              createKeyboardLetterBox("S"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("d"),
+              createKeyboardLetterBox("D"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("f"),
+              createKeyboardLetterBox("F"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("g"),
+              createKeyboardLetterBox("G"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("h"),
+              createKeyboardLetterBox("H"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("j"),
+              createKeyboardLetterBox("J"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("k"),
+              createKeyboardLetterBox("K"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("l"),
+              createKeyboardLetterBox("L"),
             ],
           ),
           SizedBox(
@@ -245,24 +249,56 @@ class _wordlePageState extends State<wordlePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              createKeyboardLetterBox("z"),
+              createKeyboardLetterBox("Z"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("x"),
+              createKeyboardLetterBox("X"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("c"),
+              createKeyboardLetterBox("C"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("v"),
+              createKeyboardLetterBox("V"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("b"),
+              createKeyboardLetterBox("B"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("n"),
+              createKeyboardLetterBox("N"),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("m"),
+              createKeyboardLetterBox("M"),
+              SizedBox(width: 5,),
+              Container(
+                width: 60,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  border: Border.all(
+                    color: Colors.red,
+                    width: 2.0,
+                    style: BorderStyle.solid,
+                  ),
+                ),
+                child: ElevatedButton(
+
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      padding: EdgeInsets.zero,
+                      shadowColor: Colors.transparent,
+                      overlayColor: Colors.transparent,
+                      splashFactory: NoSplash.splashFactory
+                  ),
+                  onPressed: () {
+
+                  },
+                  child: Icon(Icons.arrow_back),),
+              ),
             ],
           ),
         ],
       ),
     );
   }
+}
+
+class BoxSettings {
+  String? color;
+  String? letter;
+
 
 }
