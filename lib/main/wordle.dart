@@ -343,19 +343,23 @@ class _wordlePageState extends State<wordlePage> {
                       else {
                         String? answerWordForYellowAmounts = answerWord;
 
-                        for(int i = 0; i < word.length; i++){
-                          if(listOfWordsLetters[onGuessWordNumber][i].letter == answerWord![i]){
+                        for(int i = 0; i < word.length; i++) {
+                          if (listOfWordsLetters[onGuessWordNumber][i].letter == answerWord![i]) {
                             listOfWordsLetters[onGuessWordNumber][i].color = Colors.green;
                             listOfLetters.firstWhere((key) => key.letter == word[i]).color = Colors.green;
+                            answerWordForYellowAmounts = answerWordForYellowAmounts!.replaceFirst("${listOfWordsLetters[onGuessWordNumber][i].letter}", "");
                           }
-                          else if(answerWord!.contains("${listOfWordsLetters[onGuessWordNumber][i].letter}")){
+                        }
 
-                            if(answerWordForYellowAmounts!.contains("${listOfWordsLetters[onGuessWordNumber][i].letter}")) {
-                              listOfWordsLetters[onGuessWordNumber][i].color = Colors.yellow;
-                            }
-                            else {
-                              listOfWordsLetters[onGuessWordNumber][i].color = Colors.grey;
-                            }
+                        for(int i = 0; i < word.length; i++) {
+
+                          if (listOfWordsLetters[onGuessWordNumber][i].color == Colors.green) {
+                            continue;
+                          }
+
+                          if(answerWordForYellowAmounts!.contains("${listOfWordsLetters[onGuessWordNumber][i].letter}")){
+
+                            listOfWordsLetters[onGuessWordNumber][i].color = Colors.yellow;
 
                             answerWordForYellowAmounts = answerWordForYellowAmounts.replaceFirst("${listOfWordsLetters[onGuessWordNumber][i].letter}", "");
 
@@ -365,11 +369,17 @@ class _wordlePageState extends State<wordlePage> {
                           }
                           else {
                             listOfWordsLetters[onGuessWordNumber][i].color = Colors.grey;
-                            listOfLetters.firstWhere((key) => key.letter == word[i]).color = Colors.grey;
+
+                            if(listOfLetters.firstWhere((key) => key.letter == word[i]).color != Colors.green){
+                              listOfLetters.firstWhere((key) => key.letter == word[i]).color = Colors.grey;
+                            }
+
                           }
                         }
 
                         onGuessWordNumber++;
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(answerWord!)));
+
                       }
                     });
                   },
@@ -461,4 +471,3 @@ Future<List<String>> loadWords() async {
 
   return words;
 }
-
