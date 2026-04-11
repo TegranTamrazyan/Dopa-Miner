@@ -1,7 +1,7 @@
-import 'dart:ffi';
-
+import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class wordlePage extends StatefulWidget {
   const wordlePage({super.key});
@@ -10,15 +10,52 @@ class wordlePage extends StatefulWidget {
   State<wordlePage> createState() => _wordlePageState();
 }
 
+
 class _wordlePageState extends State<wordlePage> {
+
+  List<BoxSettings> listOfLetters = [];
+  List<List<BoxSettings>> listOfWordsLetters = [];
+  List<String> wordList = [];
+
+  int onGuessWordNumber = 0;
+
+  String? answerWord;
 
   @override
   void initState() {
     super.initState();
+
+    listOfLetters = [
+      BoxSettings(Colors.white, "Q"), BoxSettings(Colors.white, "W"), BoxSettings(Colors.white, "E"),BoxSettings(Colors.white, "R"),
+      BoxSettings(Colors.white, "T"), BoxSettings(Colors.white, "Y"), BoxSettings(Colors.white, "U"), BoxSettings(Colors.white, "I"),
+      BoxSettings(Colors.white, "O"), BoxSettings(Colors.white, "P"), BoxSettings(Colors.white, "A"), BoxSettings(Colors.white, "S"),
+      BoxSettings(Colors.white, "D"), BoxSettings(Colors.white, "F"), BoxSettings(Colors.white, "G"), BoxSettings(Colors.white, "H"),
+      BoxSettings(Colors.white, "J"), BoxSettings(Colors.white, "K"), BoxSettings(Colors.white, "L"), BoxSettings(Colors.white, "Z"),
+      BoxSettings(Colors.white, "X"), BoxSettings(Colors.white, "C"), BoxSettings(Colors.white, "V"), BoxSettings(Colors.white, "B"),
+      BoxSettings(Colors.white, "N"), BoxSettings(Colors.white, "M")
+    ];
+
+    listOfWordsLetters = [
+      [BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""),BoxSettings(Colors.white, ""), BoxSettings(Colors.white, "")],
+      [BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""), BoxSettings(Colors.white, "")],
+      [BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""), BoxSettings(Colors.white, "")],
+      [BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""), BoxSettings(Colors.white, "")],
+      [BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""), BoxSettings(Colors.white, "")],
+      [BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""),BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""), BoxSettings(Colors.white, "")]
+    ];
+    
+    loadWords().then((words){
+      setState(() {
+        wordList = words;
+        answerWord = getRandomWord();
+      });
+    });
+
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Center(
         child: Column(
@@ -38,17 +75,21 @@ class _wordlePageState extends State<wordlePage> {
     );
   }
 
-  Container createBox(int id) {
+  Container createBox(BoxSettings boxSetting) {
+    Color? color = boxSetting.color;
     return Container(
       width: 65,
       height: 65,
+      alignment: Alignment.center,
       decoration: BoxDecoration(
+        color: color,
         border: Border.all(
           color: Colors.black,
           width: 2.0,
           style: BorderStyle.solid,
         ),
       ),
+      child: Text(boxSetting.letter!, style: TextStyle(color: Colors.black, fontSize: 40),),
     );
   }
 
@@ -62,15 +103,15 @@ class _wordlePageState extends State<wordlePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              createBox(1,),
+              createBox(listOfWordsLetters[0][0]),
               SizedBox(width: 5,),
-              createBox(2),
+              createBox(listOfWordsLetters[0][1]),
               SizedBox(width: 5,),
-              createBox(3),
+              createBox(listOfWordsLetters[0][2]),
               SizedBox(width: 5,),
-              createBox(4),
+              createBox(listOfWordsLetters[0][3]),
               SizedBox(width: 5,),
-              createBox(5),
+              createBox(listOfWordsLetters[0][4]),
             ],
           ),
           SizedBox(
@@ -79,15 +120,15 @@ class _wordlePageState extends State<wordlePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              createBox(6),
+              createBox(listOfWordsLetters[1][0]),
               SizedBox(width: 5,),
-              createBox(7),
+              createBox(listOfWordsLetters[1][1]),
               SizedBox(width: 5,),
-              createBox(8),
+              createBox(listOfWordsLetters[1][2]),
               SizedBox(width: 5,),
-              createBox(9),
+              createBox(listOfWordsLetters[1][3]),
               SizedBox(width: 5,),
-              createBox(10),
+              createBox(listOfWordsLetters[1][4]),
             ],
           ),
           SizedBox(
@@ -96,15 +137,15 @@ class _wordlePageState extends State<wordlePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              createBox(11),
+              createBox(listOfWordsLetters[2][0]),
               SizedBox(width: 5,),
-              createBox(12),
+              createBox(listOfWordsLetters[2][1]),
               SizedBox(width: 5,),
-              createBox(13),
+              createBox(listOfWordsLetters[2][2]),
               SizedBox(width: 5,),
-              createBox(14),
+              createBox(listOfWordsLetters[2][3]),
               SizedBox(width: 5,),
-              createBox(15),
+              createBox(listOfWordsLetters[2][4]),
             ],
           ),
           SizedBox(
@@ -113,15 +154,15 @@ class _wordlePageState extends State<wordlePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              createBox(16),
+              createBox(listOfWordsLetters[3][0]),
               SizedBox(width: 5,),
-              createBox(17),
+              createBox(listOfWordsLetters[3][1]),
               SizedBox(width: 5,),
-              createBox(18),
+              createBox(listOfWordsLetters[3][2]),
               SizedBox(width: 5,),
-              createBox(19),
+              createBox(listOfWordsLetters[3][3]),
               SizedBox(width: 5,),
-              createBox(20),
+              createBox(listOfWordsLetters[3][4]),
             ],
           ),
           SizedBox(
@@ -130,15 +171,15 @@ class _wordlePageState extends State<wordlePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              createBox(21),
+              createBox(listOfWordsLetters[4][0]),
               SizedBox(width: 5,),
-              createBox(22),
+              createBox(listOfWordsLetters[4][1]),
               SizedBox(width: 5,),
-              createBox(23),
+              createBox(listOfWordsLetters[4][2]),
               SizedBox(width: 5,),
-              createBox(24),
+              createBox(listOfWordsLetters[4][3]),
               SizedBox(width: 5,),
-              createBox(25),
+              createBox(listOfWordsLetters[4][4]),
             ],
           ),
           SizedBox(
@@ -147,15 +188,15 @@ class _wordlePageState extends State<wordlePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              createBox(26),
+              createBox(listOfWordsLetters[5][0]),
               SizedBox(width: 5,),
-              createBox(27),
+              createBox(listOfWordsLetters[5][1]),
               SizedBox(width: 5,),
-              createBox(28),
+              createBox(listOfWordsLetters[5][2]),
               SizedBox(width: 5,),
-              createBox(29),
+              createBox(listOfWordsLetters[5][3]),
               SizedBox(width: 5,),
-              createBox(30),
+              createBox(listOfWordsLetters[5][4]),
             ],
           ),
         ],
@@ -163,11 +204,13 @@ class _wordlePageState extends State<wordlePage> {
     );
   }
 
-  Container createKeyboardLetterBox(String letter){
+  Container createKeyboardLetterBox(BoxSettings boxSetting){
+    Color? color = boxSetting.color;
     return Container(
       width: 36,
       height: 36,
       decoration: BoxDecoration(
+        color: color,
         border: Border.all(
           color: Colors.black,
           width: 2.0,
@@ -175,17 +218,35 @@ class _wordlePageState extends State<wordlePage> {
         ),
       ),
       child: ElevatedButton(
-
         style: ElevatedButton.styleFrom(
+          backgroundColor: color,
             padding: EdgeInsets.zero,
           shadowColor: Colors.transparent,
             overlayColor: Colors.transparent,
             splashFactory: NoSplash.splashFactory
         ),
         onPressed: () {
+          setState(() {
 
+            if(listOfWordsLetters[onGuessWordNumber][0].letter == ""){
+              listOfWordsLetters[onGuessWordNumber][0].letter = boxSetting.letter;
+            }
+            else if(listOfWordsLetters[onGuessWordNumber][1].letter == ""){
+              listOfWordsLetters[onGuessWordNumber][1].letter = boxSetting.letter;
+            }
+            else if(listOfWordsLetters[onGuessWordNumber][2].letter == ""){
+              listOfWordsLetters[onGuessWordNumber][2].letter = boxSetting.letter;
+            }
+            else if(listOfWordsLetters[onGuessWordNumber][3].letter == ""){
+              listOfWordsLetters[onGuessWordNumber][3].letter = boxSetting.letter;
+            }
+            else if(listOfWordsLetters[onGuessWordNumber][4].letter == ""){
+              listOfWordsLetters[onGuessWordNumber][4].letter = boxSetting.letter;
+            }
+
+          });
         },
-        child: Text(letter, style: TextStyle(fontSize: 21, color: Colors.black,),),
+        child: Text(boxSetting.letter!, style: TextStyle(fontSize: 21, color: Colors.black,),),
       ),
     );
   }
@@ -197,25 +258,25 @@ class _wordlePageState extends State<wordlePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              createKeyboardLetterBox("Q"),
+              createKeyboardLetterBox(listOfLetters[0]),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("W"),
+              createKeyboardLetterBox(listOfLetters[1]),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("E"),
+              createKeyboardLetterBox(listOfLetters[2]),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("R"),
+              createKeyboardLetterBox(listOfLetters[3]),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("T"),
+              createKeyboardLetterBox(listOfLetters[4]),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("Y"),
+              createKeyboardLetterBox(listOfLetters[5]),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("U"),
+              createKeyboardLetterBox(listOfLetters[6]),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("I"),
+              createKeyboardLetterBox(listOfLetters[7]),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("O"),
+              createKeyboardLetterBox(listOfLetters[8]),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("P"),
+              createKeyboardLetterBox(listOfLetters[9]),
             ],
           ),
           SizedBox(
@@ -224,23 +285,23 @@ class _wordlePageState extends State<wordlePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              createKeyboardLetterBox("A"),
+              createKeyboardLetterBox(listOfLetters[10]),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("S"),
+              createKeyboardLetterBox(listOfLetters[11]),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("D"),
+              createKeyboardLetterBox(listOfLetters[12]),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("F"),
+              createKeyboardLetterBox(listOfLetters[13]),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("G"),
+              createKeyboardLetterBox(listOfLetters[14]),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("H"),
+              createKeyboardLetterBox(listOfLetters[15]),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("J"),
+              createKeyboardLetterBox(listOfLetters[16]),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("K"),
+              createKeyboardLetterBox(listOfLetters[17]),
               SizedBox(width: 5,),
-              createKeyboardLetterBox("L"),
+              createKeyboardLetterBox(listOfLetters[18]),
             ],
           ),
           SizedBox(
@@ -249,27 +310,13 @@ class _wordlePageState extends State<wordlePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              createKeyboardLetterBox("Z"),
-              SizedBox(width: 5,),
-              createKeyboardLetterBox("X"),
-              SizedBox(width: 5,),
-              createKeyboardLetterBox("C"),
-              SizedBox(width: 5,),
-              createKeyboardLetterBox("V"),
-              SizedBox(width: 5,),
-              createKeyboardLetterBox("B"),
-              SizedBox(width: 5,),
-              createKeyboardLetterBox("N"),
-              SizedBox(width: 5,),
-              createKeyboardLetterBox("M"),
-              SizedBox(width: 5,),
               Container(
-                width: 60,
+                width: 50,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: Colors.red,
+                  color: Colors.grey,
                   border: Border.all(
-                    color: Colors.red,
+                    color: Colors.grey,
                     width: 2.0,
                     style: BorderStyle.solid,
                   ),
@@ -277,16 +324,112 @@ class _wordlePageState extends State<wordlePage> {
                 child: ElevatedButton(
 
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
+                      backgroundColor: Colors.grey,
                       padding: EdgeInsets.zero,
                       shadowColor: Colors.transparent,
                       overlayColor: Colors.transparent,
                       splashFactory: NoSplash.splashFactory
                   ),
                   onPressed: () {
+                    setState(() {
+                      String word = "${listOfWordsLetters[onGuessWordNumber][0].letter}${listOfWordsLetters[onGuessWordNumber][1].letter}${listOfWordsLetters[onGuessWordNumber][2].letter}${listOfWordsLetters[onGuessWordNumber][3].letter}${listOfWordsLetters[onGuessWordNumber][4].letter}";
 
+                      if (listOfWordsLetters[onGuessWordNumber][4].letter == ""){
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Missing Letters!')));
+                      }
+                      else if (!wordList.contains(word)){
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Not a Word!')));
+                      }
+                      else {
+                        String? answerWordForYellowAmounts = answerWord;
+
+                        for(int i = 0; i < word.length; i++){
+                          if(listOfWordsLetters[onGuessWordNumber][i].letter == answerWord![i]){
+                            listOfWordsLetters[onGuessWordNumber][i].color = Colors.green;
+                            listOfLetters.firstWhere((key) => key.letter == word[i]).color = Colors.green;
+                          }
+                          else if(answerWord!.contains("${listOfWordsLetters[onGuessWordNumber][i].letter}")){
+
+                            if(answerWordForYellowAmounts!.contains("${listOfWordsLetters[onGuessWordNumber][i].letter}")) {
+                              listOfWordsLetters[onGuessWordNumber][i].color = Colors.yellow;
+                            }
+                            else {
+                              listOfWordsLetters[onGuessWordNumber][i].color = Colors.grey;
+                            }
+
+                            answerWordForYellowAmounts = answerWordForYellowAmounts.replaceFirst("${listOfWordsLetters[onGuessWordNumber][i].letter}", "");
+
+                            if(listOfLetters.firstWhere((key) => key.letter == word[i]).color != Colors.green){
+                              listOfLetters.firstWhere((key) => key.letter == word[i]).color = Colors.yellow;
+                            }
+                          }
+                          else {
+                            listOfWordsLetters[onGuessWordNumber][i].color = Colors.grey;
+                            listOfLetters.firstWhere((key) => key.letter == word[i]).color = Colors.grey;
+                          }
+                        }
+
+                        onGuessWordNumber++;
+                      }
+                    });
                   },
-                  child: Icon(Icons.arrow_back),),
+                  child: Text("Enter", style: TextStyle(color: Colors.black))),
+              ),
+              SizedBox(width: 5,),
+              createKeyboardLetterBox(listOfLetters[19]),
+              SizedBox(width: 5,),
+              createKeyboardLetterBox(listOfLetters[20]),
+              SizedBox(width: 5,),
+              createKeyboardLetterBox(listOfLetters[21]),
+              SizedBox(width: 5,),
+              createKeyboardLetterBox(listOfLetters[22]),
+              SizedBox(width: 5,),
+              createKeyboardLetterBox(listOfLetters[23]),
+              SizedBox(width: 5,),
+              createKeyboardLetterBox(listOfLetters[24]),
+              SizedBox(width: 5,),
+              createKeyboardLetterBox(listOfLetters[25]),
+              SizedBox(width: 5,),
+              Container(
+                width: 60,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  border: Border.all(
+                    color: Colors.grey,
+                    width: 2.0,
+                    style: BorderStyle.solid,
+                  ),
+                ),
+                child: ElevatedButton(
+
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey,
+                      padding: EdgeInsets.zero,
+                      shadowColor: Colors.transparent,
+                      overlayColor: Colors.transparent,
+                      splashFactory: NoSplash.splashFactory
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      if(listOfWordsLetters[onGuessWordNumber][4].letter != ""){
+                        listOfWordsLetters[onGuessWordNumber][4].letter = "";
+                      }
+                      else if(listOfWordsLetters[onGuessWordNumber][3].letter != ""){
+                        listOfWordsLetters[onGuessWordNumber][3].letter = "";
+                      }
+                      else if(listOfWordsLetters[onGuessWordNumber][2].letter != ""){
+                        listOfWordsLetters[onGuessWordNumber][2].letter = "";
+                      }
+                      else if(listOfWordsLetters[onGuessWordNumber][1].letter != ""){
+                        listOfWordsLetters[onGuessWordNumber][1].letter = "";
+                      }
+                      else if(listOfWordsLetters[onGuessWordNumber][0].letter != ""){
+                        listOfWordsLetters[onGuessWordNumber][0].letter = "";
+                      }
+                    });
+                  },
+                  child: Icon(Icons.arrow_back, color: Colors.black,),),
               ),
             ],
           ),
@@ -294,11 +437,28 @@ class _wordlePageState extends State<wordlePage> {
       ),
     );
   }
+  String getRandomWord() {
+    final random = Random();
+    return wordList[random.nextInt(wordList.length)];
+  }
 }
 
 class BoxSettings {
-  String? color;
+  Color? color;
   String? letter;
 
-
+  BoxSettings(this.color, this.letter);
 }
+
+Future<List<String>> loadWords() async {
+  String data = await rootBundle.loadString('assets/words.txt');
+  List<String> words = data.split('\n');
+
+  words = words
+      .map((w) => w.trim())
+      .where((w) => w.length == 5)
+      .toList();
+
+  return words;
+}
+
