@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'forgotpassword.dart';
+import 'twostepvalidation.dart';
+import 'register.dart';
+
 
 void main(){
   runApp(MyApp());
@@ -35,55 +39,74 @@ class _LoginPageState extends State<LoginPage> {
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom
         ),
-        child: Center(
-          child: Column(
-            children: [
-              SizedBox(height: 70),
-              Text('Welcome to\nDopa-Miner!',
-                  style: TextStyle(
+        child: Column(
+          children: [
+            SizedBox(height: 70),
+            Text('Welcome to\nDopa-Miner!',
+                style: TextStyle(
                   color: Colors.pinkAccent,
                   decoration: TextDecoration.underline,
                   decorationColor: Colors.pink,
                   fontSize: 45
-              )),
-              SizedBox(height: 30),
-              Image.network('https://i.gzn.jp/img/2023/12/01/kurzgesagt-internet-worse/a00013.jpg'),
-              Padding(padding: EdgeInsets.symmetric(horizontal: 100, vertical: 50),
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: email,
-                      decoration: InputDecoration(
-                          labelText: "Enter your email",
-                          labelStyle: TextStyle(
-                            color: Colors.pinkAccent,
-                          )
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
+                )
+            ),
 
-                    SizedBox(height: 20),
+            SizedBox(height: 30),
 
-                    TextField(
-                      controller: password,
-                      decoration: InputDecoration(
-                          labelText: "Enter your password",
-                          labelStyle: TextStyle(
-                            color: Colors.pinkAccent,
-                          )
-                      ),
-                      textAlign: TextAlign.center,
+            Image.network('https://i.gzn.jp/img/2023/12/01/kurzgesagt-internet-worse/a00013.jpg'),
+            Padding(padding: EdgeInsets.only(left: 50, right: 50, top: 50),
+              child: Column(
+                children: [
+                  TextField(
+                    controller: email,
+                    decoration: InputDecoration(
+                        labelText: "Enter your email",
+                        labelStyle: TextStyle(
+                          color: Colors.pinkAccent,
+                        )
                     ),
-                  ],
-                ),
+                  ),
+
+                  SizedBox(height: 20),
+
+                  TextField(
+                    controller: password,
+                    decoration: InputDecoration(
+                        labelText: "Enter your password",
+                        labelStyle: TextStyle(
+                          color: Colors.pinkAccent,
+                        )
+                    ),
+                  ),
+                ],
               ),
-              TextButton(onPressed: (){
+            ),
+
+            SizedBox(height: 20),
+
+            TextButton(
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PasswordPage(),
+                  ),
+                );
+              },
+              child: Text('Forgot password', style: TextStyle(decoration: TextDecoration.underline)),
+            ),
+
+            SizedBox(height: 30),
+
+            ElevatedButton(
+              onPressed: (){
                 if(email.text == "" || password.text == ""){
                   ScaffoldMessenger.of(context).
-                  showSnackBar(SnackBar(content: Text('Please provide a valid email & password')));
+                  showSnackBar(SnackBar(content: Text('Please provide a valid '
+                      'email & password')));
                 } else {
                   ScaffoldMessenger.of(context).
-                  showSnackBar(SnackBar(content: Text('THIS WORKS!')));
+                  showSnackBar(SnackBar(content: Text('THIS WILL WORKS!')));
                   /*
                   Navigator.push(
                     context,
@@ -95,20 +118,28 @@ class _LoginPageState extends State<LoginPage> {
                   );
                   */
                 }
-
               },
-                child: Text(
-                  'Visit',
-                  style: TextStyle(
-                      color: Colors.lightGreen,
-                      decoration: TextDecoration.underline,
-                      decorationColor: Colors.lightGreen,
-                      fontSize: 40
+              child: Text('Sign in', style: TextStyle(fontSize: 40)),
+            ),
+
+            TextButton(
+              onPressed: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RegisterPage(),
                   ),
-                ),
+                );
+              },
+              child: Text(
+                  'sign up',
+                  style: TextStyle(
+                    decoration: TextDecoration.underline,
+                    fontSize: 25
+                  )
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
