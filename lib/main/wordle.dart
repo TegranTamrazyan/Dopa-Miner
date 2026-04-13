@@ -15,7 +15,7 @@ class _wordlePageState extends State<wordlePage> {
 
   List<BoxSettings> listOfLetters = [];
   List<List<BoxSettings>> listOfWordsLetters = [];
-  List<String> wordList = [];
+  Set<String> wordList = {};
 
   int onGuessWordNumber = 0;
 
@@ -46,7 +46,7 @@ class _wordlePageState extends State<wordlePage> {
     
     loadWords().then((words){
       setState(() {
-        wordList = words;
+        wordList.addAll(words);
         answerWord = getRandomWord();
       });
     });
@@ -378,7 +378,6 @@ class _wordlePageState extends State<wordlePage> {
                         }
 
                         onGuessWordNumber++;
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(answerWord!)));
 
                       }
                     });
@@ -449,7 +448,7 @@ class _wordlePageState extends State<wordlePage> {
   }
   String getRandomWord() {
     final random = Random();
-    return wordList[random.nextInt(wordList.length)];
+    return wordList.elementAt(random.nextInt(wordList.length));
   }
 }
 
