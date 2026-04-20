@@ -8,6 +8,8 @@ class PasswordPage extends StatefulWidget {
 }
 
 class _PasswordPageState extends State<PasswordPage> {
+  bool isVisible = false;
+
   TextEditingController email = TextEditingController();
 
   TextEditingController code = TextEditingController();
