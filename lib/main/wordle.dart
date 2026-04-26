@@ -67,7 +67,11 @@ class _wordlePageState extends State<wordlePage> {
               height: 85,
             ),
             Container(
-              child: createAllKeyboardLetterBoxes(),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: createAllKeyboardLetterBoxes(),
+              ),
+
             ),
           ],
         ),
@@ -76,10 +80,11 @@ class _wordlePageState extends State<wordlePage> {
   }
 
   Container createBox(BoxSettings boxSetting) {
+    final size = Sizing(context);
     Color? color = boxSetting.color;
     return Container(
-      width: 65,
-      height: 65,
+      width: size.wp(0.13),
+      height: size.wp(0.13),
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: color,
@@ -205,10 +210,11 @@ class _wordlePageState extends State<wordlePage> {
   }
 
   Container createKeyboardLetterBox(BoxSettings boxSetting){
+    final size = Sizing(context);
     Color? color = boxSetting.color;
     return Container(
-      width: 36,
-      height: 36,
+      width: size.wp(0.085),
+      height: size.wp(0.085),
       decoration: BoxDecoration(
         color: color,
         border: Border.all(
@@ -469,4 +475,16 @@ Future<List<String>> loadWords() async {
       .toList();
 
   return words;
+}
+
+class Sizing {
+  final double w;
+  final double h;
+
+  Sizing(BuildContext context)
+      : w = MediaQuery.of(context).size.width,
+        h = MediaQuery.of(context).size.height;
+
+  double wp(double percent) => w * percent;
+  double hp(double percent) => h * percent;
 }

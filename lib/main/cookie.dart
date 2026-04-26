@@ -122,7 +122,7 @@ class _cookiePageState extends State<cookiePage> {
                   ],
                 ),
 
-                SizedBox(height: 270,),
+                SizedBox(height: MediaQuery.of(context).size.height/4,),
 
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -389,5 +389,17 @@ class CookieClickMessage {
   Timer? timer;
 
   CookieClickMessage(this.x, this.y, this.Text);
+}
+
+class Sizing {
+  final double w;
+  final double h;
+
+  Sizing(BuildContext context)
+      : w = MediaQuery.of(context).size.width,
+        h = MediaQuery.of(context).size.height;
+
+  double wp(double percent) => w * percent;
+  double hp(double percent) => h * percent;
 }
 

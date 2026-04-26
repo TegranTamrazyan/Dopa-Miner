@@ -4,7 +4,6 @@ import 'flappy.dart';
 import 'cookie.dart';
 import 'leaderboard.dart';
 import 'profile.dart';
-import 'home.dart';
 
 
 
@@ -33,11 +32,11 @@ class buildPage extends StatefulWidget {
 
 class _buildPageState extends State<buildPage> {
   int _selectedIndex = 0;
+  static List<String> urlsList = ["https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",];
 
-  static List<Widget> _widgetOptions = <Widget>[
+  List<Widget> _widgetOptions = <Widget>[
     profilePage(),
     leaderboardPage(),
-    homePage(),
     flappyPage(),
     wordlePage(),
     cookiePage()
@@ -47,9 +46,7 @@ class _buildPageState extends State<buildPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex)
-      ),
+      body: _widgetOptions[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -59,11 +56,6 @@ class _buildPageState extends State<buildPage> {
           ),
           BottomNavigationBarItem(
               icon: Icon(Icons.leaderboard),
-              label: "",
-              backgroundColor: Colors.blueAccent
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home),
               label: "",
               backgroundColor: Colors.blueAccent
           ),

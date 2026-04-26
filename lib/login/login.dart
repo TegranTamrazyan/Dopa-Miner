@@ -3,21 +3,21 @@ import 'forgotpassword.dart';
 import 'twostepvalidation.dart';
 import 'register.dart';
 import 'package:splashscreen/splashscreen.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:firebase_core/firebase_core.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-      options: FirebaseOptions(
-          apiKey: "AIzaSyDzgtpvLRAADSXyiHMvJBt1pTYP7GKFaEw", //"api_key": [{"current_key": "AIzaSyDzgtpvLRAADSXyiHMvJBt1pTYP7GKFaEw"}]
-          appId: "447932810045", //"project_number": "447932810045"
-          messagingSenderId:  "1:447932810045:android:1798f20550047c0d933b54", //"mobilesdk_app_id": "1:447932810045:android:1798f20550047c0d933b54"
-          projectId: "firestoresample-9b096" //"project_id": "firestoresample-9b096"
-      )
-  );
+  //await Firebase.initializeApp(
+  //    options: FirebaseOptions(
+  //        apiKey: "AIzaSyDzgtpvLRAADSXyiHMvJBt1pTYP7GKFaEw", //"api_key": [{"current_key": "AIzaSyDzgtpvLRAADSXyiHMvJBt1pTYP7GKFaEw"}]
+  //        appId: "447932810045", //"project_number": "447932810045"
+  //        messagingSenderId:  "1:447932810045:android:1798f20550047c0d933b54", //"mobilesdk_app_id": "1:447932810045:android:1798f20550047c0d933b54"
+  //        projectId: "firestoresample-9b096" //"project_id": "firestoresample-9b096"
+  //    )
+  //);
 
   runApp(MyApp());
 }
