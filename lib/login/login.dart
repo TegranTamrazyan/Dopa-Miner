@@ -8,16 +8,16 @@ import 'package:splashscreen/splashscreen.dart';
 
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  //await Firebase.initializeApp(
-  //    options: FirebaseOptions(
-  //        apiKey: "AIzaSyDzgtpvLRAADSXyiHMvJBt1pTYP7GKFaEw", //"api_key": [{"current_key": "AIzaSyDzgtpvLRAADSXyiHMvJBt1pTYP7GKFaEw"}]
-  //        appId: "447932810045", //"project_number": "447932810045"
-  //        messagingSenderId:  "1:447932810045:android:1798f20550047c0d933b54", //"mobilesdk_app_id": "1:447932810045:android:1798f20550047c0d933b54"
-  //        projectId: "firestoresample-9b096" //"project_id": "firestoresample-9b096"
-  //    )
-  //);
+  // WidgetsFlutterBinding.ensureInitialized();
+  //
+  // await Firebase.initializeApp(
+  //     options: FirebaseOptions(
+  //         apiKey: "AIzaSyDzgtpvLRAADSXyiHMvJBt1pTYP7GKFaEw", //"api_key": [{"current_key": "AIzaSyDzgtpvLRAADSXyiHMvJBt1pTYP7GKFaEw"}]
+  //         appId: "447932810045", //"project_number": "447932810045"
+  //         messagingSenderId:  "1:447932810045:android:a8acdd3786489f6f933b54", //"mobilesdk_app_id": "1:447932810045:android:1798f20550047c0d933b54"
+  //         projectId: "firestoresample-9b096" //"project_id": "firestoresample-9b096"
+  //     )
+  // );
 
   runApp(MyApp());
 }
@@ -40,9 +40,9 @@ class MyApp extends StatelessWidget {
             color: Colors.white,
           )
         ),
-        backgroundColor: Colors.pinkAccent,
+        backgroundColor: Colors.red,
         styleTextUnderTheLoader: const TextStyle(
-          color: Colors.pinkAccent,
+          color: Colors.white,
           fontSize: 45
         ),
         loadingText: const Text(
@@ -56,8 +56,8 @@ class MyApp extends StatelessWidget {
         loadingTextPadding: EdgeInsets.zero,
         useLoader: false,
         loaderColor: Colors.white,
-        image: Image.network('https://i.gzn.jp/img/2023/12/01/kurzgesagt-internet-worse/a00013.jpg'),
-        photoSize: 210,
+        image: Image.asset('assets/vanierlogo.png'),
+        photoSize: 200,
       ),
     );
   }
@@ -73,6 +73,30 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  RegExp emailReg = RegExp(r'^[A-Za-z0-9_-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$');
+  String errorMessage = '';
+
+  bool inputFormatCheck(String? input, [RegExp? regex]){
+    if(input == null || input.trim().isEmpty) {
+      errorMessage = 'Please do not leave the email or password empty';
+      return false;
+
+    } else {
+      if (regex != null && !regex.hasMatch(input.trim())) {
+        errorMessage = 'Please ensure the email is formatted as such: '
+        'name@email.domain';
+        return false;
+
+      } else {
+        return true;
+      }
+    }
+  }
+
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> errorSnack(){
+    return ScaffoldMessenger.of(context).
+    showSnackBar(SnackBar(content: Text(errorMessage)));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,15 +113,14 @@ class _LoginPageState extends State<LoginPage> {
                 style: TextStyle(
                   color: Colors.pinkAccent,
                   decoration: TextDecoration.underline,
-                  decorationColor: Colors.pink,
+                  decorationColor: Colors.green,
                   fontSize: 45
                 )
             ),
 
             SizedBox(height: 30),
 
-            ///Template pic. Will have one from assets
-            Image.network('https://i.gzn.jp/img/2023/12/01/kurzgesagt-internet-worse/a00013.jpg'),
+            Image.asset('assets/dopaminerlogo.png'),
             Padding(padding: EdgeInsets.only(left: 50, right: 50, top: 50),
               child: Column(
                 children: [
@@ -137,18 +160,31 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 );
               },
-              child: Text('Forgot password', style: TextStyle(decoration: TextDecoration.underline)),
+              style: TextButton.styleFrom(
+                overlayColor: Colors.transparent,
+              ),
+              child: const Text('Forgot password',
+                style: TextStyle(
+                  color: Colors.indigo,
+                  decoration: TextDecoration.underline,
+                  decorationColor: Colors.indigo
+                )
+              ),
             ),
 
             SizedBox(height: 30),
 
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green
+              ),
               onPressed: (){
-                if(email.text == "" || password.text == ""){
-                  ScaffoldMessenger.of(context).
-                  showSnackBar(SnackBar(content: Text('Please provide a valid '
-                      'email & password')));
-                } else {
+                if(!inputFormatCheck(email.text, emailReg) ||
+                   !inputFormatCheck(password.text)) {
+                  errorSnack();
+                }
+                //else if () {} //For Firebase checks
+                else {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -159,7 +195,12 @@ class _LoginPageState extends State<LoginPage> {
                   );
                 }
               },
-              child: Text('Sign in', style: TextStyle(fontSize: 40)),
+              child: const Text('Sign in',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 40
+                )
+              ),
             ),
 
             TextButton(
@@ -171,12 +212,17 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 );
               },
+              style: TextButton.styleFrom(
+                overlayColor: Colors.transparent,
+              ),
               child: Text(
-                  'sign up',
-                  style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    fontSize: 25
-                  )
+                'sign up',
+                style: TextStyle(
+                  color: Colors.indigo,
+                  decoration: TextDecoration.underline,
+                  decorationColor: Colors.indigo,
+                  fontSize: 25
+                )
               ),
             ),
           ],

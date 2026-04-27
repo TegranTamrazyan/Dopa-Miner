@@ -71,6 +71,8 @@ flutter:
     - assets/back.jpg
     - assets/backgroundflappy.jpg
     - assets/cloud.png
+    - assets/vanierlogo.png
+    - assets/dopaminerlogo.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

@@ -17,6 +17,25 @@ class _PasswordPageState extends State<PasswordPage> {
   TextEditingController newPass = TextEditingController();
   TextEditingController rePass = TextEditingController();
 
+  RegExp passReg = RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,20}$');
+  String errorMessage = '';
+  bool isStepTwo = false;
+
+  bool inputFormatCheck(String? input, [RegExp? regex]){
+    if(input == null || input.trim().isEmpty) {
+      errorMessage = 'Provide a valid information in each field';
+      return false;
+
+    } else {
+      if (regex != null && !regex.hasMatch(input.trim())) {
+        errorMessage = 'Ensure the email is formatted as \"name@email.domain\"';
+        return false;
+
+      } else {
+        return true;
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,18 +48,19 @@ class _PasswordPageState extends State<PasswordPage> {
         child: Column(
           children: [
             SizedBox(height: 60),
-            Text('Welcome to\nDopa-Miner!',
+            const Text('Password Recovery',
                 style: TextStyle(
                     color: Colors.pinkAccent,
                     decoration: TextDecoration.underline,
-                    decorationColor: Colors.pink,
+                    decorationColor: Colors.green,
                     fontSize: 45
                 )
             ),
 
             SizedBox(height: 20),
 
-            Image.network('https://i.gzn.jp/img/2023/12/01/kurzgesagt-internet-worse/a00013.jpg'),
+            Image.asset('assets/dopaminerlogo.png'),
+
             Padding(padding: EdgeInsets.only(left: 50, right: 50, top: 10),
               child: Column(
                 children: [
@@ -49,7 +69,7 @@ class _PasswordPageState extends State<PasswordPage> {
                     decoration: InputDecoration(
                         labelText: "Your email",
                         labelStyle: TextStyle(
-                          color: Colors.pinkAccent,
+                          color: Colors.green,
                         )
                     ),
                   ),
@@ -61,11 +81,20 @@ class _PasswordPageState extends State<PasswordPage> {
                       ScaffoldMessenger.of(context).
                       showSnackBar(SnackBar(content: Text('A validation request was sent'
                           ' to the provided email')));
+                      setState(() {
+                        //animationColor();
+                        isStepTwo = !isStepTwo;
+                      });
                     },
-                    child: Text(
+                    style: TextButton.styleFrom(
+                      overlayColor: Colors.transparent,
+                    ),
+                    child: const Text(
                         'verify email',
                         style: TextStyle(
+                            color: Colors.indigo,
                             decoration: TextDecoration.underline,
+                            decorationColor: Colors.indigo,
                             fontSize: 20
                         )
                     ),
@@ -73,54 +102,97 @@ class _PasswordPageState extends State<PasswordPage> {
 
                   SizedBox(height: 5),
 
-                  ///Make these TextFields invisible till email clicks button to confirm?
-                  TextField(
-                    controller: newPass,
-                    decoration: InputDecoration(
-                        labelText: "Your new password",
-                        labelStyle: TextStyle(
-                          color: Colors.pinkAccent,
-                        )
-                    ),
+                  AnimatedOpacity(
+                    duration: Duration(milliseconds: 500),
+                    opacity: isStepTwo ? 1.0 : 0.0,
+                    child: IgnorePointer(
+                      ignoring: !isStepTwo,
+                      child: Container(
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              controller: newPass,
+                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              validator: (value) {
+                                if(!inputFormatCheck(value, passReg)){
+                                  return """
+What\'s expected:
+  - At least 1 lowercase letter
+  - At least 1 uppercase letter
+  - At least 1 number
+  - Between 8 to 20 characters
+  - No special characters
+""";
+                                } else {
+                                  return null;
+                                }
+                              },
+                              decoration: InputDecoration(
+                                labelText: "Your new password",
+                                labelStyle: TextStyle(color: Colors.pinkAccent),
+                              ),
+                            ),
+                            SizedBox(height: 15),
+                            TextField(
+                              controller: rePass,
+                              decoration: InputDecoration(
+                                labelText: "Re-enter the new password",
+                                labelStyle: TextStyle(color: Colors.pinkAccent),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
                   ),
-
-                  SizedBox(height: 15),
-
-                  TextField(
-                    controller: rePass,
-                    decoration: InputDecoration(
-                        labelText: "Re-enter the new password",
-                        labelStyle: TextStyle(
-                          color: Colors.pinkAccent,
-                        )
-                    ),
-                  ),
-                ],
-              ),
+              ],
+            ),
             ),
 
             SizedBox(height: 40),
 
-            ElevatedButton(
-              onPressed: (){
-                if(newPass.text == "" || newPass.text != rePass.text){
-                  ScaffoldMessenger.of(context).
-                  showSnackBar(SnackBar(content: Text('Please provide a valid '
-                      'email & password')));
-                } else {
-                  Navigator.pop(context);
-                }
-              },
-              child: Text('Confirm change', style: TextStyle(fontSize: 30)),
-            ),
-
-            SizedBox(height: 10),
-
-            ElevatedButton(
-              onPressed: (){
-                  Navigator.pop(context);
-              },
-              child: Text('Back to the login page', style: TextStyle(fontSize: 30)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.pinkAccent
+                  ),
+                  onPressed: (){
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Cancel',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 30
+                      )
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green
+                  ),
+                  onPressed: (){
+                    if(inputFormatCheck(newPass.text, passReg)){
+                      ScaffoldMessenger.of(context).
+                      showSnackBar(SnackBar(content: Text('Please enter a valid '
+                          'password')));
+                    } else if (rePass.text != newPass.text) {
+                      ScaffoldMessenger.of(context).
+                      showSnackBar(SnackBar(content: Text('The two passwords '
+                          'do not match.')));
+                    } else {
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: const Text('Confirm',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 30
+                      )
+                  ),
+                ),
+              ],
             ),
           ],
         ),

@@ -31,15 +31,15 @@ class _ValidatePageState extends State<ValidatePage> {
                 style: TextStyle(
                     color: Colors.pinkAccent,
                     decoration: TextDecoration.underline,
-                    decorationColor: Colors.pink,
+                    decorationColor: Colors.green,
                     fontSize: 45
                 )
             ),
 
             SizedBox(height: 20),
 
-            Image.network('https://i.gzn.jp/img/2023/12/01/kurzgesagt-internet-worse/a00013.jpg'),
-            Padding(padding: EdgeInsets.only(left: 50, right: 50, top: 10),
+            Image.asset('assets/dopaminerlogo.png'),
+            Padding(padding: EdgeInsets.only(left: 50, right: 50, top: 20),
               child: Column(
                 children: [
                   TextField(
@@ -63,7 +63,9 @@ class _ValidatePageState extends State<ValidatePage> {
                     child: Text(
                         'Re-send code',
                         style: TextStyle(
+                            color: Colors.indigo,
                             decoration: TextDecoration.underline,
+                            decorationColor: Colors.indigo,
                             fontSize: 20
                         )
                     ),
@@ -74,27 +76,44 @@ class _ValidatePageState extends State<ValidatePage> {
 
             SizedBox(height: 40),
 
-            ElevatedButton(
-              onPressed: (){
-                ///template validation
-                if(code.text == ""){
-                  ScaffoldMessenger.of(context).
-                  showSnackBar(SnackBar(content: Text('Please provide a valid '
-                      'email & password')));
-                } else {
-                  Navigator.pop(context);
-                }
-              },
-              child: Text('Enter App', style: TextStyle(fontSize: 30)),
-            ),
-
-            SizedBox(height: 10),
-
-            ElevatedButton(
-              onPressed: (){
-                Navigator.pop(context);
-              },
-              child: Text('Back to the login page', style: TextStyle(fontSize: 30)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.pinkAccent
+                  ),
+                  onPressed: (){
+                      Navigator.pop(context);
+                  },
+                  child: const Text('Cancel',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 30
+                      )
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green
+                  ),
+                  onPressed: (){
+                    if(code.text.trim().isEmpty || int.tryParse(code.text.trim()) == null){
+                      ScaffoldMessenger.of(context).
+                          showSnackBar(SnackBar(content: Text('Please enter a valid code '
+                              'with only numbers')));
+                    } else {
+                        Navigator.pop(context);
+                    }
+                  },
+                  child: const Text('Enter App',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 30
+                      )
+                  ),
+                ),
+              ],
             ),
           ],
         ),
