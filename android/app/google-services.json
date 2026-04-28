@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "447932810045",
-    "project_id": "firestoresample-9b096",
-    "storage_bucket": "firestoresample-9b096.firebasestorage.app"
+    "project_number": "267231609387",
+    "project_id": "dopaminer-bb5fd",
+    "storage_bucket": "dopaminer-bb5fd.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:447932810045:android:a8acdd3786489f6f933b54",
+        "mobilesdk_app_id": "1:267231609387:android:6284bc41ec8884585fe06e",
         "android_client_info": {
           "package_name": "com.example.dopaminer_new2"
         }
@@ -15,45 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDzgtpvLRAADSXyiHMvJBt1pTYP7GKFaEw"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:447932810045:android:8d38de4a2c6e7231933b54",
-        "android_client_info": {
-          "package_name": "com.example.exam2"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDzgtpvLRAADSXyiHMvJBt1pTYP7GKFaEw"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:447932810045:android:1798f20550047c0d933b54",
-        "android_client_info": {
-          "package_name": "com.example.firestoretest"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDzgtpvLRAADSXyiHMvJBt1pTYP7GKFaEw"
+          "current_key": "AIzaSyAIZ0TdRQwe1NVo18iFuXpyAUQj2q7o0qU"
         }
       ],
       "services": {

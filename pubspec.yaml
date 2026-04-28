@@ -32,9 +32,9 @@ dependencies:
     sdk: flutter
   easy_sidemenu: any
   splashscreen: ^2.0.0
-  #firebase_core: any
-  #cloud_firestore: any
-  #firebase_core_platform_interface: any
+  firebase_core: any
+  cloud_firestore: any
+  firebase_core_platform_interface: any
 
 
 
