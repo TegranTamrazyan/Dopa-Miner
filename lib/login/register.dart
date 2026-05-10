@@ -77,6 +77,21 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
     }
   }
 
+  Future<bool> checkUsername() async {
+    try {
+      QuerySnapshot result = await FirebaseFirestore.instance.collection("users")
+        .where("username", isEqualTo: name.text.trim()).limit(1).get();
+      if(result.docs.isNotEmpty){
+        errorMessage = 'Sorry, the username is already taken. '
+          '\nPlease choose another.';
+      }
+      return result.docs.isNotEmpty;
+    } catch (e) {
+      errorMessage = 'Something\'s wrong with the username.';
+      return true;
+    }
+  }
+
   Future<void> createUserAccount() async {
     try {
       UserCredential userCredential =
@@ -301,13 +316,15 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green
                   ),
-                  onPressed: (){
+                  onPressed: () async {
                     if(!isStepTwo){
                       if(inputFormatCheck(name.text) && inputFormatCheck(age.text)){
                         if(int.tryParse(age.text) == null || int.tryParse(age.text)! <= 0){
-                          ScaffoldMessenger.of(context).
-                          showSnackBar(const SnackBar(content: Text('Provide an '
-                              'age as a whole number greater than 0.')));
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                            content: Text('Provide an age as a whole number greater than 0.')));
+                        } else if (await checkUsername()) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(errorMessage)));
                         } else {
                           setState(() {
                             animationColor();
@@ -315,18 +332,16 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                           });
                         }
                       } else {
-                        ScaffoldMessenger.of(context).
-                        showSnackBar(const SnackBar(content: Text('Please provide'
-                          'valid informations in each box')));
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('Please provide valid information in each box')));
                       }
                     } else {
                       if(!inputFormatCheck(email.text, emailReg) || !inputFormatCheck(password.text, passReg)){
-                        ScaffoldMessenger.of(context).
-                        showSnackBar(const SnackBar(content: Text('Please provide'
-                          'a valid information in each field')));
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('Please provide a valid information in each field')));
                       } else if (verif.text != password.text) {
                         ScaffoldMessenger.of(context).
-                        showSnackBar(const SnackBar(content: Text('The two passwords do not match.')));
+                          showSnackBar(const SnackBar(content: Text('The two passwords do not match.')));
                       } else {
                         createUserAccount();
                       }
