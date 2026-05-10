@@ -33,6 +33,7 @@ dependencies:
   easy_sidemenu: any
   splashscreen: ^2.0.0
   firebase_core: any
+  firebase_auth: any
   cloud_firestore: any
   firebase_core_platform_interface: any
   intl: any

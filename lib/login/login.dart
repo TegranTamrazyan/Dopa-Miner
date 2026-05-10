@@ -5,6 +5,7 @@ import 'register.dart';
 import 'package:splashscreen/splashscreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 
 void main() async {
@@ -17,6 +18,15 @@ void main() async {
           messagingSenderId:  "1:267231609387:android:6284bc41ec8884585fe06e", //"mobilesdk_app_id": "1:447932810045:android:1798f20550047c0d933b54"
           projectId: "dopaminer-bb5fd" //"project_id": "firestoresample-9b096"
       )
+
+    //I'm testing in my own firebase, I'll save the one we have shared here:
+
+        // apiKey: "AIzaSyAIZ0TdRQwe1NVo18iFuXpyAUQj2q7o0qU",
+        // appId: "267231609387",
+        // messagingSenderId:  "1:267231609387:android:6284bc41ec8884585fe06e",
+        // projectId: "dopaminer-bb5fd"
+
+
   );
 
   runApp(MyApp());
@@ -98,6 +108,57 @@ class _LoginPageState extends State<LoginPage> {
     showSnackBar(SnackBar(content: Text(errorMessage)));
   }
 
+  Future<void> loginUser() async {
+    try {
+      UserCredential userCredential =
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email.text.trim(),
+        password: password.text.trim(),
+      );
+
+      if (userCredential.user != null && !userCredential.user!.emailVerified) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please verify your email before logging in.")),
+        );
+        return;
+      }
+
+      if (!mounted) return;
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ValidatePage(
+            email: email.text.trim(),
+          ),
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      String message = "Login failed.";
+
+      if (e.code == "user-not-found") {
+        message = "No account found with this email.";
+      } else if (e.code == "wrong-password") {
+        message = "Incorrect password.";
+      } else if (e.code == "invalid-email") {
+        message = "Invalid email.";
+      } else if (e.code == "invalid-credential") {
+        message = "Incorrect email or password.";
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    email.dispose();
+    password.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -138,6 +199,7 @@ class _LoginPageState extends State<LoginPage> {
 
                   TextField(
                     controller: password,
+                    obscureText: true,
                     decoration: const InputDecoration(
                         labelText: "Enter your password",
                         labelStyle: TextStyle(
@@ -185,14 +247,15 @@ class _LoginPageState extends State<LoginPage> {
                 }
                 //else if () {} //For Firebase checks
                 else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ValidatePage(
-                        email: email.text
-                      ),
-                    ),
-                  );
+                  //Navigator.push(
+                  //  context,
+                  //  MaterialPageRoute(
+                  //    builder: (context) => ValidatePage(
+                  //      email: email.text
+                  //    ),
+                  // ),
+                  //);
+                  loginUser();
                 }
               },
               child: const Text('Sign in',

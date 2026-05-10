@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import "package:intl/intl.dart";
+import 'gamesave.dart';
 
 class cookiePage extends StatefulWidget {
   const cookiePage({super.key});
@@ -18,6 +19,7 @@ class _cookiePageState extends State<cookiePage> {
 
   Timer? fallingCookieSpawnerTimer;
   Timer? autoCookieTimer;
+  Timer? savingGameTimer;
 
   List<FallingCookie> fallingCookies = [];
   List<CookieClickMessage> floatingClickMessages = [];
@@ -66,6 +68,12 @@ class _cookiePageState extends State<cookiePage> {
       Upgrade(name: "The Final Cookie", baseCost: BigInt.from(15000000000000), cpsIncrease: BigInt.from(30000000000), maxUpgrades: 3),
     ];
 
+    loadCookieClicker();
+
+    savingGameTimer = Timer.periodic(const Duration(seconds: 10), (timer) {
+      saveCookieClicker();
+    });
+
     fallingCookiesReward = clickStrength * BigInt.from(10);
 
     fallingCookieSpawnerTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
@@ -106,6 +114,7 @@ class _cookiePageState extends State<cookiePage> {
   void dispose() {
     fallingCookieSpawnerTimer?.cancel();
     autoCookieTimer?.cancel();
+    savingGameTimer?.cancel();
 
     for (final cookie in fallingCookies) {
       cookie.timer?.cancel();
@@ -248,6 +257,42 @@ class _cookiePageState extends State<cookiePage> {
         ],
       ),
     );
+  }
+  Future<void> saveCookieClicker() async { //VERY IMPORTANT
+    Map<String, int> upgradeLevels = {};
+
+    for (var upgrade in upgrades) {
+      upgradeLevels[upgrade.name] = upgrade.level;
+    }
+
+    await GameSave.saveCookieClicker(
+      cookieCount: cookieCount,
+      clickStrength: clickStrength,
+      cookiesPerSecond: cookiesPerSecond,
+      fallingCookiesReward: fallingCookiesReward ?? BigInt.from(10),
+      upgrades: upgradeLevels,
+    );
+  }
+
+  Future<void> loadCookieClicker() async { //VERY IMPORTANT
+    final data = await GameSave.loadUserData();
+
+    if (data == null) return;
+
+    final cookieData = data["cookieClicker"] ?? {};
+
+    setState(() {
+      cookieCount = BigInt.parse(cookieData["cookieCount"] ?? "0");
+      clickStrength = BigInt.parse(cookieData["clickStrength"] ?? "1");
+      cookiesPerSecond = BigInt.parse(cookieData["cookiesPerSecond"] ?? "0");
+      fallingCookiesReward = BigInt.parse(cookieData["fallingCookiesReward"] ?? "10");
+
+      Map<String, dynamic> savedUpgrades = cookieData["upgrades"] ?? {};
+
+      for (var upgrade in upgrades) {
+        upgrade.level = savedUpgrades[upgrade.name] ?? 0;
+      }
+    });
   }
 
   String displayCookieInMoneyFormat(BigInt cookiesAmount) {

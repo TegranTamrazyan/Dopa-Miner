@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'gamesave.dart';
 
 class flappyPage extends StatefulWidget {
   const flappyPage({super.key});
@@ -45,6 +46,8 @@ class _flappyPageState extends State<flappyPage> {
   @override
   void initState() {
     super.initState();
+
+    loadFlappySaveHighScore();
 
     scoreTimer = Timer.periodic(const Duration(milliseconds: 120), (timer) {
       if (!mounted || gameOver || !gameStarted) return;
@@ -162,6 +165,23 @@ class _flappyPageState extends State<flappyPage> {
     );
   }
 
+  Future<void> loadFlappySaveHighScore() async{
+    final data = await GameSave.loadUserData();
+
+    if(data == null) return;
+
+    final flappyBirdData = data['flappyBird'] ?? {};
+
+    setState(() {
+      highScore = flappyBirdData["highScore"] ?? 0;
+    });
+
+  }
+
+  Future<void> saveFlappyBirdData() async {
+    await GameSave.saveFlappyHighScore(highScore);
+  }
+
   void checkCollision() {
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -197,6 +217,7 @@ class _flappyPageState extends State<flappyPage> {
 
       if (score > highScore) {
         highScore = score;
+        saveFlappyBirdData();
       }
     });
 

@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'gamesave.dart';
 
 class wordlePage extends StatefulWidget {
   const wordlePage({super.key});
@@ -20,9 +21,13 @@ class _wordlePageState extends State<wordlePage> {
   String? answerWord;
   bool gameOver = false;
 
+  int guessedWordsAmount = 0;
+
   @override
   void initState() {
     super.initState();
+
+    loadWordleStats();
 
     listOfLetters = [
       BoxSettings(Colors.white, "Q"), BoxSettings(Colors.white, "W"), BoxSettings(Colors.white, "E"),BoxSettings(Colors.white, "R"),
@@ -387,7 +392,11 @@ class _wordlePageState extends State<wordlePage> {
 
                         if (word == answerWord) {
                           onGuessWordNumber++;
+                          guessedWordsAmount++;
+                          saveWordleStats();
+
                           showGameResultPopup("You Win!", "The word was $answerWord.",);
+
                         }
                         else if (onGuessWordNumber == 5) {
                           onGuessWordNumber++;
@@ -467,6 +476,22 @@ class _wordlePageState extends State<wordlePage> {
   String getRandomWord() {
     final random = Random();
     return wordList.elementAt(random.nextInt(wordList.length));
+  }
+
+  Future<void> loadWordleStats() async {
+    final data = await GameSave.loadUserData();
+
+    if (data == null) return;
+
+    final wordleData = data["wordle"] ?? {};
+
+    setState(() {
+      guessedWordsAmount = wordleData["guessedWordsAmount"] ?? 0;
+    });
+  }
+
+  Future<void> saveWordleStats() async {
+    await GameSave.saveWordleGuessedWords(guessedWordsAmount);
   }
 
   void restartGame() {

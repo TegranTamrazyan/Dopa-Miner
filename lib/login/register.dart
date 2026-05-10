@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -23,6 +25,17 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
 
   late AnimationController controller;
   late Animation<Color?> animation = const AlwaysStoppedAnimation(Colors.green);
+
+  @override
+  void dispose() {
+    name.dispose();
+    age.dispose();
+    email.dispose();
+    password.dispose();
+    verif.dispose();
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -61,6 +74,68 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
       } else {
         return true;
       }
+    }
+  }
+
+  Future<void> createUserAccount() async {
+    try {
+      UserCredential userCredential =
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email.text.trim(),
+        password: password.text.trim(),
+      );
+
+      String uid = userCredential.user!.uid;
+
+      await FirebaseFirestore.instance.collection("users").doc(uid).set({
+        "username": name.text.trim(),
+        "age": int.parse(age.text.trim()),
+        "email": email.text.trim(),
+
+        "cookieClicker": {
+          "cookieCount": "0",
+          "clickStrength": "1",
+          "cookiesPerSecond": "0",
+          "fallingCookiesReward": "10",
+          "upgrades": {},
+        },
+
+        "flappyBird": {
+          "highScore": 0,
+        },
+
+        "wordle": {
+          "guessedWordsAmount": 0,
+        },
+
+        "createdAt": FieldValue.serverTimestamp(),
+      });
+
+      await userCredential.user!.sendEmailVerification();
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Account created. Check your email to verify your account."),
+        ),
+      );
+
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      String message = "Registration failed.";
+
+      if (e.code == "email-already-in-use") {
+        message = "This email is already being used.";
+      } else if (e.code == "weak-password") {
+        message = "This password is too weak.";
+      } else if (e.code == "invalid-email") {
+        message = "This email is invalid.";
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
     }
   }
 
@@ -156,14 +231,14 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                                 autovalidateMode: AutovalidateMode.onUserInteraction,
                                 validator: (value) {
                                   if(!inputFormatCheck(value, passReg)){
-return """
-What\'s expected:
-  - At least 1 lowercase letter
-  - At least 1 uppercase letter
-  - At least 1 number
-  - Between 8 to 20 characters
-  - No special characters
-""";
+                                    return """
+                                    What\'s expected:
+                                      - At least 1 lowercase letter
+                                      - At least 1 uppercase letter
+                                      - At least 1 number
+                                      - Between 8 to 20 characters
+                                      - No special characters
+                                    """;
                                   } else {
                                     return null;
                                   }
@@ -240,14 +315,12 @@ What\'s expected:
                             'informations in each box')));
                       }
                     } else {
-                      if(inputFormatCheck(email.text, emailReg) || inputFormatCheck(password.text, passReg)){
+                      if(!inputFormatCheck(email.text, emailReg) || !inputFormatCheck(password.text, passReg)){
                         ScaffoldMessenger.of(context).
-                        showSnackBar(const SnackBar(content: Text('Please provide a valid '
-                          'information in each field')));
+                        showSnackBar(const SnackBar(content: Text('Please provide a valid information in each field')));
                       } else if (verif.text != password.text) {
                         ScaffoldMessenger.of(context).
-                        showSnackBar(const SnackBar(content: Text('The two passwords '
-                            'do not match.')));
+                        showSnackBar(const SnackBar(content: Text('The two passwords do not match.')));
                       } else {
                         ///Needs to also create an account in the db
                         Navigator.pop(context);
