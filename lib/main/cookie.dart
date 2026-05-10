@@ -187,7 +187,7 @@ class _cookiePageState extends State<cookiePage> {
                       final text = CookieClickMessage(
                         tapPosition.dx,
                         tapPosition.dy - 40,
-                        "+$clickStrength",
+                        "+${displayCookieInMoneyFormat(clickStrength)}",
                       );
 
                       floatingClickMessages.add(text);
@@ -233,8 +233,8 @@ class _cookiePageState extends State<cookiePage> {
                   },
                   child: Image.asset(
                     "assets/cookie.png",
-                    width: 40,
-                    height: 40,
+                    width: 80,
+                    height: 80,
                   ),
                 ),
               ),
