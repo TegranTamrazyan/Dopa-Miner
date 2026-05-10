@@ -87,31 +87,36 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
 
       String uid = userCredential.user!.uid;
 
-      await FirebaseFirestore.instance.collection("users").doc(uid).set({
-        "username": name.text.trim(),
-        "age": int.parse(age.text.trim()),
-        "email": email.text.trim(),
+      try {
+        await FirebaseFirestore.instance.collection("users").doc(uid).set({
+          "username": name.text.trim(),
+          "age": int.parse(age.text.trim()),
+          "email": email.text.trim(),
 
-        "cookieClicker": {
-          "cookieCount": "0",
-          "clickStrength": "1",
-          "cookiesPerSecond": "0",
-          "fallingCookiesReward": "10",
-          "upgrades": {},
-        },
+          "cookieClicker": {
+            "cookieCount": "0",
+            "clickStrength": "1",
+            "cookiesPerSecond": "0",
+            "fallingCookiesReward": "10",
+            "upgrades": {},
+          },
 
-        "flappyBird": {
-          "highScore": 0,
-        },
+          "flappyBird": {
+            "highScore": 0,
+          },
 
-        "wordle": {
-          "guessedWordsAmount": 0,
-        },
+          "wordle": {
+            "guessedWordsAmount": 0,
+          },
 
-        "createdAt": FieldValue.serverTimestamp(),
-      });
+          "createdAt": FieldValue.serverTimestamp(),
+        });
 
-      await userCredential.user!.sendEmailVerification();
+        await userCredential.user!.sendEmailVerification();
+      } catch (e) {
+        await userCredential.user!.delete();
+        rethrow;
+      }
 
       if (!mounted) return;
 
@@ -123,7 +128,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
 
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
-      String message = "Registration failed.";
+      String message = "Registration failed. Reason: ${e.message}";
 
       if (e.code == "email-already-in-use") {
         message = "This email is already being used.";
@@ -232,12 +237,12 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                                 validator: (value) {
                                   if(!inputFormatCheck(value, passReg)){
                                     return """
-                                    What\'s expected:
-                                      - At least 1 lowercase letter
-                                      - At least 1 uppercase letter
-                                      - At least 1 number
-                                      - Between 8 to 20 characters
-                                      - No special characters
+  What\'s expected:
+    - At least 1 lowercase letter
+    - At least 1 uppercase letter
+    - At least 1 number
+    - Between 8 to 20 characters
+    - No special characters
                                     """;
                                   } else {
                                     return null;
@@ -311,19 +316,19 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                         }
                       } else {
                         ScaffoldMessenger.of(context).
-                        showSnackBar(const SnackBar(content: Text('Please provide valid '
-                            'informations in each box')));
+                        showSnackBar(const SnackBar(content: Text('Please provide'
+                          'valid informations in each box')));
                       }
                     } else {
                       if(!inputFormatCheck(email.text, emailReg) || !inputFormatCheck(password.text, passReg)){
                         ScaffoldMessenger.of(context).
-                        showSnackBar(const SnackBar(content: Text('Please provide a valid information in each field')));
+                        showSnackBar(const SnackBar(content: Text('Please provide'
+                          'a valid information in each field')));
                       } else if (verif.text != password.text) {
                         ScaffoldMessenger.of(context).
                         showSnackBar(const SnackBar(content: Text('The two passwords do not match.')));
                       } else {
-                        ///Needs to also create an account in the db
-                        Navigator.pop(context);
+                        createUserAccount();
                       }
                     }
                   },
