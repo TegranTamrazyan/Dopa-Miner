@@ -25,8 +25,8 @@ class _ValidatePageState extends State<ValidatePage> {
         ),
         child: Column(
           children: [
-            SizedBox(height: 60),
-            Text('Please Confirm\nyour email',
+            const SizedBox(height: 60),
+            const Text('Please Confirm\nyour email',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Colors.pinkAccent,
@@ -36,15 +36,15 @@ class _ValidatePageState extends State<ValidatePage> {
                 )
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             Image.asset('assets/dopaminerlogo.png'),
-            Padding(padding: EdgeInsets.only(left: 50, right: 50, top: 20),
+            Padding(padding: const EdgeInsets.only(left: 50, right: 50, top: 20),
               child: Column(
                 children: [
                   TextField(
                     controller: code,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         labelText: "Enter the 6 digit code sent to your email",
                         labelStyle: TextStyle(
                           color: Colors.pinkAccent,
@@ -52,15 +52,15 @@ class _ValidatePageState extends State<ValidatePage> {
                     ),
                   ),
 
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
 
                   TextButton(
                     onPressed: (){
                       ScaffoldMessenger.of(context).
-                      showSnackBar(SnackBar(content: Text('A new 6 digit code'
+                      showSnackBar(const SnackBar(content: Text('A new 6 digit code'
                           'was sent to the provided email')));
                     },
-                    child: Text(
+                    child: const Text(
                         'Re-send code',
                         style: TextStyle(
                             color: Colors.indigo,
@@ -74,7 +74,7 @@ class _ValidatePageState extends State<ValidatePage> {
               ),
             ),
 
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -100,7 +100,7 @@ class _ValidatePageState extends State<ValidatePage> {
                   onPressed: (){
                     if(code.text.trim().isEmpty || int.tryParse(code.text.trim()) == null){
                       ScaffoldMessenger.of(context).
-                          showSnackBar(SnackBar(content: Text('Please enter a valid code '
+                          showSnackBar(const SnackBar(content: Text('Please enter a valid code '
                               'with only numbers')));
                     } else {
                         Navigator.pop(context);

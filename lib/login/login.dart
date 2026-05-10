@@ -11,7 +11,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
-      options: FirebaseOptions(
+      options: const FirebaseOptions(
           apiKey: "AIzaSyAIZ0TdRQwe1NVo18iFuXpyAUQj2q7o0qU", //"api_key": [{"current_key": "AIzaSyDzgtpvLRAADSXyiHMvJBt1pTYP7GKFaEw"}]
           appId: "267231609387", //"project_number": "447932810045"
           messagingSenderId:  "1:267231609387:android:6284bc41ec8884585fe06e", //"mobilesdk_app_id": "1:447932810045:android:1798f20550047c0d933b54"
@@ -108,8 +108,8 @@ class _LoginPageState extends State<LoginPage> {
         ),
         child: Column(
           children: [
-            SizedBox(height: 60),
-            Text('Welcome to\nDopa-Miner!',
+            const SizedBox(height: 60),
+            const Text('Welcome to\nDopa-Miner!',
                 style: TextStyle(
                   color: Colors.pinkAccent,
                   decoration: TextDecoration.underline,
@@ -118,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                 )
             ),
 
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
 
             Image.asset('assets/dopaminerlogo.png'),
             Padding(padding: EdgeInsets.only(left: 50, right: 50, top: 50),
@@ -126,7 +126,7 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   TextField(
                     controller: email,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         labelText: "Enter your email",
                         labelStyle: TextStyle(
                           color: Colors.pinkAccent,
@@ -138,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
 
                   TextField(
                     controller: password,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         labelText: "Enter your password",
                         labelStyle: TextStyle(
                           color: Colors.pinkAccent,
@@ -149,7 +149,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             TextButton(
               onPressed: (){
@@ -172,7 +172,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
 
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
 
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -215,7 +215,7 @@ class _LoginPageState extends State<LoginPage> {
               style: TextButton.styleFrom(
                 overlayColor: Colors.transparent,
               ),
-              child: Text(
+              child: const Text(
                 'sign up',
                 style: TextStyle(
                   color: Colors.indigo,

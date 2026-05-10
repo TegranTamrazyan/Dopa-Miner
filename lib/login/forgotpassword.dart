@@ -47,7 +47,7 @@ class _PasswordPageState extends State<PasswordPage> {
         ),
         child: Column(
           children: [
-            SizedBox(height: 60),
+            const SizedBox(height: 60),
             const Text('Password Recovery',
                 style: TextStyle(
                     color: Colors.pinkAccent,
@@ -66,7 +66,7 @@ class _PasswordPageState extends State<PasswordPage> {
                 children: [
                   TextField(
                     controller: email,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         labelText: "Your email",
                         labelStyle: TextStyle(
                           color: Colors.green,
@@ -79,7 +79,7 @@ class _PasswordPageState extends State<PasswordPage> {
                   TextButton(
                     onPressed: (){
                       ScaffoldMessenger.of(context).
-                      showSnackBar(SnackBar(content: Text('A validation request was sent'
+                      showSnackBar(const SnackBar(content: Text('A validation request was sent'
                           ' to the provided email')));
                       setState(() {
                         //animationColor();
@@ -100,10 +100,10 @@ class _PasswordPageState extends State<PasswordPage> {
                     ),
                   ),
 
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
 
                   AnimatedOpacity(
-                    duration: Duration(milliseconds: 500),
+                    duration: const Duration(milliseconds: 500),
                     opacity: isStepTwo ? 1.0 : 0.0,
                     child: IgnorePointer(
                       ignoring: !isStepTwo,
@@ -127,15 +127,15 @@ What\'s expected:
                                   return null;
                                 }
                               },
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: "Your new password",
                                 labelStyle: TextStyle(color: Colors.pinkAccent),
                               ),
                             ),
-                            SizedBox(height: 15),
+                            const SizedBox(height: 15),
                             TextField(
                               controller: rePass,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: "Re-enter the new password",
                                 labelStyle: TextStyle(color: Colors.pinkAccent),
                               ),
@@ -149,7 +149,7 @@ What\'s expected:
             ),
             ),
 
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -175,11 +175,11 @@ What\'s expected:
                   onPressed: (){
                     if(inputFormatCheck(newPass.text, passReg)){
                       ScaffoldMessenger.of(context).
-                      showSnackBar(SnackBar(content: Text('Please enter a valid '
+                      showSnackBar(const SnackBar(content: Text('Please enter a valid '
                           'password')));
                     } else if (rePass.text != newPass.text) {
                       ScaffoldMessenger.of(context).
-                      showSnackBar(SnackBar(content: Text('The two passwords '
+                      showSnackBar(const SnackBar(content: Text('The two passwords '
                           'do not match.')));
                     } else {
                       Navigator.pop(context);

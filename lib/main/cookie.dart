@@ -1,8 +1,7 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
-
+import "package:intl/intl.dart";
 
 class cookiePage extends StatefulWidget {
   const cookiePage({super.key});
@@ -12,73 +11,117 @@ class cookiePage extends StatefulWidget {
 }
 
 class _cookiePageState extends State<cookiePage> {
+  BigInt cookieCount = BigInt.zero;
+  BigInt clickStrength = BigInt.one;
+  BigInt? fallingCookiesReward;
+  BigInt cookiesPerSecond = BigInt.zero;
 
-  int cookieCount = 0;
-  int clickStrength = 1;
-  int? fallingCookiesReward;
-  int cookiesPerSecond = 0;
-
+  Timer? fallingCookieSpawnerTimer;
+  Timer? autoCookieTimer;
 
   List<FallingCookie> fallingCookies = [];
-  
   List<CookieClickMessage> floatingClickMessages = [];
 
   late List<Upgrade> upgrades;
-
 
   @override
   void initState() {
     super.initState();
 
-    setState(() { //PUT UPGRADES HERE
-      upgrades = [
-        Upgrade(name: "Better Click", baseCost: 50, clickIncrease: 1, maxUpgrades: 100),
-        Upgrade(name: "Auto Clicker", baseCost: 100, cpsIncrease: 1, maxUpgrades: 100),
-      ];
-    });
+    upgrades = [
+      Upgrade(name: "Better Click", baseCost: BigInt.from(50), clickIncrease: BigInt.from(1), maxUpgrades: 150),
+      Upgrade(name: "Stronger Finger", baseCost: BigInt.from(150), clickIncrease: BigInt.from(2), maxUpgrades: 125),
+      Upgrade(name: "Cookie Glove", baseCost: BigInt.from(400), clickIncrease: BigInt.from(5), maxUpgrades: 100),
+      Upgrade(name: "Golden Finger", baseCost: BigInt.from(1000), clickIncrease: BigInt.from(10), maxUpgrades: 85),
+      Upgrade(name: "Diamond Finger", baseCost: BigInt.from(3500), clickIncrease: BigInt.from(25), maxUpgrades: 70),
 
-    fallingCookiesReward = clickStrength * 10;
+      Upgrade(name: "Auto Clicker", baseCost: BigInt.from(100), cpsIncrease: BigInt.from(1), maxUpgrades: 150),
+      Upgrade(name: "Cookie Cursor", baseCost: BigInt.from(300), cpsIncrease: BigInt.from(3), maxUpgrades: 125),
+      Upgrade(name: "Cookie Worker", baseCost: BigInt.from(900), cpsIncrease: BigInt.from(8), maxUpgrades: 100),
+      Upgrade(name: "Cookie Robot", baseCost: BigInt.from(2500), cpsIncrease: BigInt.from(20), maxUpgrades: 90),
+      Upgrade(name: "Cookie Factory", baseCost: BigInt.from(7500), clickIncrease: BigInt.from(60), maxUpgrades: 80),
 
-    Future.doWhile(() async {
-      await Future.delayed(const Duration(seconds: 5));
+      Upgrade(name: "Cookie Farm", baseCost: BigInt.from(15000), cpsIncrease: BigInt.from(120), maxUpgrades: 70),
+      Upgrade(name: "Cookie Mine", baseCost: BigInt.from(40000), cpsIncrease: BigInt.from(300), maxUpgrades: 65),
+      Upgrade(name: "Cookie Lab", baseCost: BigInt.from(100000), cpsIncrease: BigInt.from(750), maxUpgrades: 60),
+      Upgrade(name: "Cookie Bank", baseCost: BigInt.from(300000), cpsIncrease: BigInt.from(2000), maxUpgrades: 55),
+      Upgrade(name: "Cookie Casino", baseCost: BigInt.from(750000), clickIncrease: BigInt.from(5000), maxUpgrades: 50),
+
+      Upgrade(name: "Cookie Temple", baseCost: BigInt.from(2000000), cpsIncrease: BigInt.from(12000), maxUpgrades: 45),
+      Upgrade(name: "Cookie Castle", baseCost: BigInt.from(6000000), cpsIncrease: BigInt.from(35000), maxUpgrades: 40),
+      Upgrade(name: "Cookie Kingdom", baseCost: BigInt.from(15000000), cpsIncrease: BigInt.from(90000), maxUpgrades: 35),
+      Upgrade(name: "Cookie Empire", baseCost: BigInt.from(50000000), cpsIncrease: BigInt.from(250000), maxUpgrades: 30),
+      Upgrade(name: "Cookie Planet", baseCost: BigInt.from(150000000), clickIncrease: BigInt.from(700000), maxUpgrades: 25),
+
+      Upgrade(name: "Cookie Moon Base", baseCost: BigInt.from(500000000), cpsIncrease: BigInt.from(2000000), maxUpgrades: 22),
+      Upgrade(name: "Cookie Space Station", baseCost: BigInt.from(1500000000), cpsIncrease: BigInt.from(6000000), maxUpgrades: 20),
+      Upgrade(name: "Cookie Galaxy", baseCost: BigInt.from(5000000000), cpsIncrease: BigInt.from(18000000), maxUpgrades: 18),
+      Upgrade(name: "Cookie Universe", baseCost: BigInt.from(15000000000), cpsIncrease: BigInt.from(50000000), maxUpgrades: 15),
+      Upgrade(name: "Cookie Multiverse", baseCost: BigInt.from(50000000000), clickIncrease: BigInt.from(150000000), maxUpgrades: 12),
+
+      Upgrade(name: "Cookie God", baseCost: BigInt.from(150000000000), cpsIncrease: BigInt.from(400000000), maxUpgrades: 10),
+      Upgrade(name: "Cookie Reality Breaker", baseCost: BigInt.from(500000000000), cpsIncrease: BigInt.from(1200000000), maxUpgrades: 8),
+      Upgrade(name: "Cookie Time Machine", baseCost: BigInt.from(1500000000000), cpsIncrease: BigInt.from(3500000000), maxUpgrades: 6),
+      Upgrade(name: "Cookie Infinity Engine", baseCost: BigInt.from(5000000000000), clickIncrease: BigInt.from(10000000000), maxUpgrades: 4),
+      Upgrade(name: "The Final Cookie", baseCost: BigInt.from(15000000000000), cpsIncrease: BigInt.from(30000000000), maxUpgrades: 3),
+    ];
+
+    fallingCookiesReward = clickStrength * BigInt.from(10);
+
+    fallingCookieSpawnerTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      if (!mounted) return;
+
+      FallingCookie cookie = FallingCookie(Random().nextDouble() * 300, 0);
 
       setState(() {
-
-        FallingCookie cookie = FallingCookie(Random().nextDouble() * 300, 0);
-
         fallingCookies.add(cookie);
-
-        cookie.timer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
-          setState(() {
-            cookie.y += 4; // falling speed
-          });
-
-          if (cookie.y >= 800) {
-            removeCookie(cookie);
-          }
-        });
       });
 
-      return true;
-    });
+      cookie.timer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
+        if (!mounted) {
+          timer.cancel();
+          return;
+        }
 
-
-    Future.doWhile(() async {
-      await Future.delayed(const Duration(seconds: 1));
         setState(() {
-          cookieCount += cookiesPerSecond;
+          cookie.y += 4;
         });
-      return true;
+
+        if (cookie.y >= 800) {
+          removeCookie(cookie);
+        }
+      });
     });
 
+    autoCookieTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) return;
 
+      setState(() {
+        cookieCount += cookiesPerSecond;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    fallingCookieSpawnerTimer?.cancel();
+    autoCookieTimer?.cancel();
+
+    for (final cookie in fallingCookies) {
+      cookie.timer?.cancel();
+    }
+
+    for (final message in floatingClickMessages) {
+      message.timer?.cancel();
+    }
+
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: buildUpgradeDrawer(),
-
       body: Stack(
         children: [
           Container(
@@ -91,7 +134,6 @@ class _cookiePageState extends State<cookiePage> {
               ),
             ),
           ),
-
           SafeArea(
             child: Column(
               children: [
@@ -99,107 +141,108 @@ class _cookiePageState extends State<cookiePage> {
                   width: double.infinity,
                   height: 60,
                   color: Colors.grey.withOpacity(0.1),
-
                   child: Column(
                     children: [
-                      Text("Cookies: $cookieCount", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-                      Text("Cookies Per Second: $cookiesPerSecond", style: const TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
+                      Text(
+                        "Cookies: ${displayCookieInMoneyFormat(cookieCount)}",
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        "Cookies Per Second: ${displayCookieInMoneyFormat(cookiesPerSecond)}",
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
                     ],
                   ),
                 ),
-
                 Row(
                   children: [
                     Builder(
                       builder: (context) => IconButton(
-                        icon: Icon(Icons.menu_rounded),
+                        icon: const Icon(Icons.menu_rounded),
                         onPressed: () {
                           Scaffold.of(context).openDrawer();
                         },
                       ),
                     ),
-                    Text("Upgrades"),
+                    const Text("Upgrades"),
                   ],
                 ),
-
-                SizedBox(height: MediaQuery.of(context).size.height/4,),
-
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      shadowColor: Colors.transparent,
-                      backgroundColor: Colors.transparent,
-                      padding: EdgeInsets.zero,
-                      overlayColor: Colors.transparent,
-                      splashFactory: NoSplash.splashFactory
-                  ),
-                  onPressed: (){
+                SizedBox(height: MediaQuery.of(context).size.height / 4),
+                GestureDetector(
+                  onTapDown: (TapDownDetails details) {
                     setState(() {
                       cookieCount += clickStrength;
-                      
-                      final text = CookieClickMessage(Random().nextDouble() * 300 + 50, (Random().nextDouble() * 500) + 200, "+$clickStrength");
+
+                      final Offset tapPosition = details.globalPosition;
+
+                      final text = CookieClickMessage(
+                        tapPosition.dx,
+                        tapPosition.dy - 40,
+                        "+$clickStrength",
+                      );
 
                       floatingClickMessages.add(text);
 
                       text.timer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
+                        if (!mounted) {
+                          timer.cancel();
+                          return;
+                        }
+
                         setState(() {
-                           text.y -= 4;
+                          text.y -= 4;
                         });
 
                         if (text.y <= 200) {
-                            removeMessage(text);
+                          removeMessage(text);
                         }
                       });
                     });
                   },
-                  child: Image.asset("assets/cookie.png", width: 300, height: 300,),
+                  child: Image.asset(
+                    "assets/cookie.png",
+                    width: 300,
+                    height: 300,
+                  ),
                 ),
               ],
             ),
           ),
-
           ...fallingCookies.map((cookie) {
             return Positioned(
-                left: cookie.x,
-                top: cookie.y,
-                child: SizedBox(
-                  width: 70,
-                  height: 70,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        shadowColor: Colors.transparent,
-                        backgroundColor: Colors.transparent,
-                        padding: EdgeInsets.zero,
-                        overlayColor: Colors.transparent,
-                        splashFactory: NoSplash.splashFactory
-                    ),
-                    onPressed: (){
-                      setState(() {
-                        cookieCount += fallingCookiesReward!;
-                        removeCookie(cookie);
-                      });
-                    },
-                    child: Image.asset(
-                      "assets/cookie.png",
-                      width: 40,
-                      height: 40,
-                    ),
+              left: cookie.x,
+              top: cookie.y,
+              child: SizedBox(
+                width: 40,
+                height: 40,
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      cookieCount += fallingCookiesReward!;
+                    });
+                    removeCookie(cookie);
+                  },
+                  child: Image.asset(
+                    "assets/cookie.png",
+                    width: 40,
+                    height: 40,
                   ),
-                )
+                ),
+              ),
             );
           }),
-          
           ...floatingClickMessages.map((text) {
             return Positioned(
               left: text.x,
               top: text.y,
               child: Text(
                 text.Text,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 27,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
-              )
+              ),
             );
           }),
         ],
@@ -207,24 +250,60 @@ class _cookiePageState extends State<cookiePage> {
     );
   }
 
-  //FLOATING COOKIES
+  String displayCookieInMoneyFormat(BigInt cookiesAmount) {
+    double cookiesText = 0;
+    var formatter = NumberFormat('#,###.##');
+
+    if (cookiesAmount > BigInt.from(1000) && cookiesAmount < BigInt.from(1000000)) {
+      cookiesText = cookiesAmount / BigInt.from(1000);
+      return '${formatter.format(cookiesText)} K';
+    }
+    else if (cookiesAmount > BigInt.from(1000000) && cookiesAmount < BigInt.from(1000000000)) {
+      cookiesText = cookiesAmount / BigInt.from(1000000);
+      return '${formatter.format(cookiesText)} M';
+    }
+    else if (cookiesAmount > BigInt.from(1000000000) && cookiesAmount < BigInt.from(1000000000000)) {
+      cookiesText = cookiesAmount / BigInt.from(1000000000);
+      return '${formatter.format(cookiesText)} B';
+    }
+
+    else if (cookiesAmount > BigInt.from(1000000000000) && cookiesAmount < BigInt.from(1000000000000000)) {
+      cookiesText = cookiesAmount / BigInt.from(1000000000000);
+      return '${formatter.format(cookiesText)} T';
+    }
+    else if (cookiesAmount > BigInt.from(1000000000000000) && cookiesAmount < BigInt.from(1000000000000000000)) {
+      cookiesText = cookiesAmount / BigInt.from(1000000000000000);
+      return '${formatter.format(cookiesText)} q';
+    }
+    else if (cookiesAmount > BigInt.from(1000000000000000000) && cookiesAmount < BigInt.parse("1000000000000000000000")) {
+      cookiesText = cookiesAmount / BigInt.from(1000000000000000000);
+      return '${formatter.format(cookiesText)} Q';
+    }
+
+    return "$cookiesAmount";
+  }
+
   void removeCookie(FallingCookie cookie) {
     cookie.timer?.cancel();
+
+    if (!mounted) return;
+
     setState(() {
       fallingCookies.remove(cookie);
     });
   }
-  //FLOATING MESSAGES
+
   void removeMessage(CookieClickMessage message) {
     message.timer?.cancel();
+
+    if (!mounted) return;
+
     setState(() {
       floatingClickMessages.remove(message);
     });
   }
 
-  //BUTTONS
   Widget buildBuyButton(Upgrade upgrade, int amount) {
-
     Color color;
 
     if (upgrade.level == upgrade.maxUpgrades) {
@@ -243,44 +322,40 @@ class _cookiePageState extends State<cookiePage> {
           color: color,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.zero,
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-                overlayColor: Colors.transparent,
-                splashFactory: NoSplash.splashFactory
+              padding: EdgeInsets.zero,
+              backgroundColor: Colors.transparent,
+              shadowColor: Colors.transparent,
+              overlayColor: Colors.transparent,
+              splashFactory: NoSplash.splashFactory,
             ),
             onPressed: () {
-              int cost = upgrade.getCost(amount);
+              BigInt cost = upgrade.getCost(amount);
 
               if (cookieCount >= cost) {
                 setState(() {
-
-                  if(upgrade.level + amount <= upgrade.maxUpgrades){
+                  if (upgrade.level + amount <= upgrade.maxUpgrades) {
                     cookieCount -= cost;
                     upgrade.level += amount;
-                    clickStrength += upgrade.clickIncrease * amount;
-                    cookiesPerSecond += upgrade.cpsIncrease * amount;
-                    fallingCookiesReward = clickStrength * 10;
+                    clickStrength += upgrade.clickIncrease * BigInt.from(amount);
+                    cookiesPerSecond += upgrade.cpsIncrease * BigInt.from(amount);
+                    fallingCookiesReward = clickStrength * BigInt.from(10);
                   }
                 });
               }
-              
             },
             child: Text("x$amount"),
           ),
         ),
-        Text("${upgrade.getCost(amount)}"),
-
+        Text(displayCookieInMoneyFormat(upgrade.getCost(amount))),
       ],
     );
   }
 
-  void applyUpgradeEffects(int clickIncrease, int cpsIncrease) {
+  void applyUpgradeEffects(BigInt clickIncrease, BigInt  cpsIncrease) {
     setState(() {
-      cookieCount -= 0; // handled elsewhere
       clickStrength += clickIncrease;
       cookiesPerSecond += cpsIncrease;
-      fallingCookiesReward = clickStrength * 10;
+      fallingCookiesReward = clickStrength * BigInt.from(10);
     });
   }
 
@@ -291,37 +366,34 @@ class _cookiePageState extends State<cookiePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(upgrade.name),
-          Text("Level: ${upgrade.level}"),
+          Text("Level: ${upgrade.level} / ${upgrade.maxUpgrades}"),
         ],
       ),
       subtitle: Row(
         children: [
           buildBuyButton(upgrade, 1),
-          SizedBox(width: 10,),
+          const SizedBox(width: 20),
           buildBuyButton(upgrade, 10),
-          SizedBox(width: 10,),
+          const SizedBox(width: 20),
           buildBuyButton(upgrade, 100),
         ],
       ),
     );
   }
 
-  //UPGRADES LISTING
   Widget buildUpgradeDrawer() {
     return Drawer(
       child: SafeArea(
         child: Column(
           children: [
-             Container(
-               color: Colors.lightBlue,
-              padding: EdgeInsets.fromLTRB(99,16,99,16),
-              child: Text(
-                  "Upgrades",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
+            Container(
+              color: Colors.lightBlue,
+              padding: const EdgeInsets.fromLTRB(99, 16, 99, 16),
+              child: const Text(
+                "Upgrades",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-
-
+            ),
             Expanded(
               child: ListView(
                 children: upgrades.map((upgrade) {
@@ -336,39 +408,44 @@ class _cookiePageState extends State<cookiePage> {
   }
 }
 
-
 class Upgrade {
   String name;
-  int baseCost;
+  BigInt baseCost;
   int level;
-  int clickIncrease;
-  int cpsIncrease;
+  BigInt clickIncrease;
+  BigInt cpsIncrease;
   int maxUpgrades;
 
   Upgrade({
     required this.name,
     required this.baseCost,
     this.level = 0,
-    this.clickIncrease = 0,
-    this.cpsIncrease = 0,
+    BigInt? clickIncrease,
+    BigInt? cpsIncrease,
     this.maxUpgrades = 999,
-  });
+  })
+      : clickIncrease = clickIncrease ?? BigInt.zero,
+        cpsIncrease = cpsIncrease ?? BigInt.zero;
 
-  int getCost(int amount) {
-    int total = 0;
+  BigInt getCost(int amount) {
+    BigInt total = BigInt.zero;
+
     for (int i = 0; i < amount; i++) {
-      total += (baseCost * pow(1.09, level + i)).toInt();
+      BigInt multiplierTop = BigInt.from(109).pow(level + i);
+      BigInt multiplierBottom = BigInt.from(100).pow(level + i);
+
+      total += baseCost * multiplierTop ~/ multiplierBottom;
     }
     return total;
   }
 
-  void buy(int amount, Function setStateCallback, Function applyStats, int currentCookies) {
-    int totalCost = getCost(amount);
+  void buy(int amount, Function setStateCallback, Function applyStats, BigInt currentCookies) {
+    BigInt totalCost = getCost(amount);
 
     if (currentCookies >= totalCost) {
       setStateCallback(() {
         level += amount;
-        applyStats(clickIncrease * amount, cpsIncrease * amount);
+        applyStats(clickIncrease * BigInt.from(amount), cpsIncrease * BigInt.from(amount));
       });
     }
   }
@@ -402,4 +479,3 @@ class Sizing {
   double wp(double percent) => w * percent;
   double hp(double percent) => h * percent;
 }
-

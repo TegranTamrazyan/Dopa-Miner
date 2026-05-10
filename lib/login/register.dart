@@ -22,7 +22,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
   bool isStepTwo = false;
 
   late AnimationController controller;
-  late Animation<Color?> animation = AlwaysStoppedAnimation(Colors.green);
+  late Animation<Color?> animation = const AlwaysStoppedAnimation(Colors.green);
 
   @override
   void initState() {
@@ -75,7 +75,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
         child: Column(
           children: [
             SizedBox(height: 60),
-            Text('Create a Dopa-Miner Account',
+            const Text('Create a Dopa-Miner Account',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Colors.pinkAccent,
@@ -85,14 +85,14 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                 )
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             Image.asset('assets/dopaminerlogo.png'),
 
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
             Padding(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
                   IgnorePointer(
@@ -103,7 +103,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                         borderRadius: BorderRadius.circular(25),
                       ),
                       child: Padding(
-                        padding: EdgeInsets.only(left: 10, right: 10, bottom: 15),
+                        padding: const EdgeInsets.only(left: 10, right: 10, bottom: 15),
                         child: Column(
                           children: [
                             TextField(
@@ -113,7 +113,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                                 labelStyle: TextStyle(color: animation.value),
                               ),
                             ),
-                            SizedBox(height: 5),
+                            const SizedBox(height: 5),
                             TextField(
                               controller: age,
                               decoration: InputDecoration(
@@ -127,10 +127,10 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                     ),
                   ),
 
-                  SizedBox(height: 15),
+                  const SizedBox(height: 15),
 
                   AnimatedOpacity(
-                    duration: Duration(milliseconds: 500),
+                    duration: const Duration(milliseconds: 500),
                     opacity: isStepTwo ? 1.0 : 0.0,
                     child: IgnorePointer(
                       ignoring: !isStepTwo,
@@ -140,17 +140,17 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                           borderRadius: BorderRadius.circular(25),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.only(left: 10, right: 10, bottom: 15),
+                          padding: const EdgeInsets.only(left: 10, right: 10, bottom: 15),
                           child: Column(
                             children: [
                               TextField(
                                 controller: email,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText: "Email",
                                   labelStyle: TextStyle(color: Colors.pinkAccent),
                                 ),
                               ),
-                              SizedBox(height: 5),
+                              const SizedBox(height: 5),
                               TextFormField(
                                 controller: password,
                                 autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -168,15 +168,15 @@ What\'s expected:
                                     return null;
                                   }
                                 },
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText: "Password",
                                   labelStyle: TextStyle(color: Colors.pinkAccent),
                                 ),
                               ),
-                              SizedBox(height: 5),
+                              const SizedBox(height: 5),
                               TextField(
                                 controller: verif,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   labelText: "Confirm password",
                                   labelStyle: TextStyle(color: Colors.pinkAccent),
                                 ),
@@ -191,7 +191,7 @@ What\'s expected:
               ),
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -226,7 +226,7 @@ What\'s expected:
                       if(inputFormatCheck(name.text) && inputFormatCheck(age.text)){
                         if(int.tryParse(age.text) == null || int.tryParse(age.text)! <= 0){
                           ScaffoldMessenger.of(context).
-                          showSnackBar(SnackBar(content: Text('Provide an '
+                          showSnackBar(const SnackBar(content: Text('Provide an '
                               'age as a whole number greater than 0.')));
                         } else {
                           setState(() {
@@ -236,17 +236,17 @@ What\'s expected:
                         }
                       } else {
                         ScaffoldMessenger.of(context).
-                        showSnackBar(SnackBar(content: Text('Please provide valid '
+                        showSnackBar(const SnackBar(content: Text('Please provide valid '
                             'informations in each box')));
                       }
                     } else {
                       if(inputFormatCheck(email.text, emailReg) || inputFormatCheck(password.text, passReg)){
                         ScaffoldMessenger.of(context).
-                        showSnackBar(SnackBar(content: Text('Please provide a valid '
+                        showSnackBar(const SnackBar(content: Text('Please provide a valid '
                           'information in each field')));
                       } else if (verif.text != password.text) {
                         ScaffoldMessenger.of(context).
-                        showSnackBar(SnackBar(content: Text('The two passwords '
+                        showSnackBar(const SnackBar(content: Text('The two passwords '
                             'do not match.')));
                       } else {
                         ///Needs to also create an account in the db
