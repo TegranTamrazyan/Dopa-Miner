@@ -47,13 +47,6 @@ class _LoginPageState extends State<LoginPage> {
         password: password.text.trim(),
       );
 
-      if (userCredential.user != null && !userCredential.user!.emailVerified) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Please verify your email before logging in.")),
-        );
-        return;
-      }
-
       if (!mounted) return;
 
       Navigator.push(
@@ -175,9 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                 if(!inputFormatCheck(email.text, emailReg) ||
                    !inputFormatCheck(password.text)) {
                   errorSnack();
-                }
-                //else if () {} //For Firebase checks
-                else {
+                } else {
                   //Navigator.push(
                   //  context,
                   //  MaterialPageRoute(

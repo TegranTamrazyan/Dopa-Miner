@@ -6,31 +6,14 @@ import 'leaderboard.dart';
 import 'profile.dart';
 
 
-
-void main(){
-  runApp(myApp());
-}
-
-class myApp extends StatelessWidget {
-  const myApp({super.key});
+class GamePage extends StatefulWidget {
+  const GamePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: buildPage(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
+  State<GamePage> createState() => _GamePageState();
 }
 
-class buildPage extends StatefulWidget {
-  const buildPage({super.key});
-
-  @override
-  State<buildPage> createState() => _buildPageState();
-}
-
-class _buildPageState extends State<buildPage> {
+class _GamePageState extends State<GamePage> {
   int _selectedIndex = 0;
   static List<String> urlsList = ["https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",];
 
