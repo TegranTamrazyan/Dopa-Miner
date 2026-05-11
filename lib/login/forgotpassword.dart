@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PasswordPage extends StatefulWidget {
   const PasswordPage({super.key});
@@ -8,11 +9,7 @@ class PasswordPage extends StatefulWidget {
 }
 
 class _PasswordPageState extends State<PasswordPage> {
-  bool isVisible = false;
-
   TextEditingController email = TextEditingController();
-
-  TextEditingController code = TextEditingController();
 
   TextEditingController newPass = TextEditingController();
   TextEditingController rePass = TextEditingController();
@@ -37,6 +34,38 @@ class _PasswordPageState extends State<PasswordPage> {
     }
   }
 
+  Future<void> resetPassword() async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: email.text.trim(),
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Password reset email sent. Check your inbox.",
+          ),
+        ),
+      );
+
+    } on FirebaseAuthException catch (e) {
+
+      errorMessage = "Something went wrong.";
+
+      if (e.code == "user-not-found") {
+        errorMessage = "No account exists with this email.";
+      } else if (e.code == "invalid-email") {
+        errorMessage = "Invalid email.";
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(errorMessage)),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +86,7 @@ class _PasswordPageState extends State<PasswordPage> {
                 )
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             Image.asset('assets/dopaminerlogo.png'),
 
@@ -74,23 +103,22 @@ class _PasswordPageState extends State<PasswordPage> {
                     ),
                   ),
 
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
 
                   TextButton(
                     onPressed: (){
-                      ScaffoldMessenger.of(context).
-                      showSnackBar(const SnackBar(content: Text('A validation request was sent'
-                          ' to the provided email')));
-                      setState(() {
-                        //animationColor();
-                        isStepTwo = !isStepTwo;
-                      });
+                      resetPassword();
+
+                      // setState(() {
+                      //   //animationColor();
+                      //   isStepTwo = !isStepTwo;
+                      // });
                     },
                     style: TextButton.styleFrom(
                       overlayColor: Colors.transparent,
                     ),
                     child: const Text(
-                        'verify email',
+                        'Reset password',
                         style: TextStyle(
                             color: Colors.indigo,
                             decoration: TextDecoration.underline,
@@ -100,51 +128,51 @@ class _PasswordPageState extends State<PasswordPage> {
                     ),
                   ),
 
-                  const SizedBox(height: 5),
-
-                  AnimatedOpacity(
-                    duration: const Duration(milliseconds: 500),
-                    opacity: isStepTwo ? 1.0 : 0.0,
-                    child: IgnorePointer(
-                      ignoring: !isStepTwo,
-                      child: Container(
-                        child: Column(
-                          children: [
-                            TextFormField(
-                              controller: newPass,
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
-                              validator: (value) {
-                                if(!inputFormatCheck(value, passReg)){
-                                  return """
-What\'s expected:
-  - At least 1 lowercase letter
-  - At least 1 uppercase letter
-  - At least 1 number
-  - Between 8 to 20 characters
-  - No special characters
-""";
-                                } else {
-                                  return null;
-                                }
-                              },
-                              decoration: const InputDecoration(
-                                labelText: "Your new password",
-                                labelStyle: TextStyle(color: Colors.pinkAccent),
-                              ),
-                            ),
-                            const SizedBox(height: 15),
-                            TextField(
-                              controller: rePass,
-                              decoration: const InputDecoration(
-                                labelText: "Re-enter the new password",
-                                labelStyle: TextStyle(color: Colors.pinkAccent),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  ),
+//                   const SizedBox(height: 5),
+//
+//                   AnimatedOpacity(
+//                     duration: const Duration(milliseconds: 500),
+//                     opacity: isStepTwo ? 1.0 : 0.0,
+//                     child: IgnorePointer(
+//                       ignoring: !isStepTwo,
+//                       child: Container(
+//                         child: Column(
+//                           children: [
+//                             TextFormField(
+//                               controller: newPass,
+//                               autovalidateMode: AutovalidateMode.onUserInteraction,
+//                               validator: (value) {
+//                                 if(!inputFormatCheck(value, passReg)){
+//                                   return """
+// What\'s expected:
+//   - At least 1 lowercase letter
+//   - At least 1 uppercase letter
+//   - At least 1 number
+//   - Between 8 to 20 characters
+//   - No special characters
+// """;
+//                                 } else {
+//                                   return null;
+//                                 }
+//                               },
+//                               decoration: const InputDecoration(
+//                                 labelText: "Your new password",
+//                                 labelStyle: TextStyle(color: Colors.pinkAccent),
+//                               ),
+//                             ),
+//                             const SizedBox(height: 15),
+//                             TextField(
+//                               controller: rePass,
+//                               decoration: const InputDecoration(
+//                                 labelText: "Re-enter the new password",
+//                                 labelStyle: TextStyle(color: Colors.pinkAccent),
+//                               ),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     )
+//                   ),
               ],
             ),
             ),
@@ -164,34 +192,34 @@ What\'s expected:
                   child: const Text('Cancel',
                       style: TextStyle(
                           color: Colors.white,
-                          fontSize: 30
+                          fontSize: 40
                       )
                   ),
                 ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green
-                  ),
-                  onPressed: (){
-                    if(inputFormatCheck(newPass.text, passReg)){
-                      ScaffoldMessenger.of(context).
-                      showSnackBar(const SnackBar(content: Text('Please enter a valid '
-                          'password')));
-                    } else if (rePass.text != newPass.text) {
-                      ScaffoldMessenger.of(context).
-                      showSnackBar(const SnackBar(content: Text('The two passwords '
-                          'do not match.')));
-                    } else {
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: const Text('Confirm',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 30
-                      )
-                  ),
-                ),
+                // ElevatedButton(
+                //   style: ElevatedButton.styleFrom(
+                //       backgroundColor: Colors.green
+                //   ),
+                //   onPressed: (){
+                //     if(inputFormatCheck(newPass.text, passReg)){
+                //       ScaffoldMessenger.of(context).
+                //       showSnackBar(const SnackBar(content: Text('Please enter a '
+                //         'valid password')));
+                //     } else if (rePass.text != newPass.text) {
+                //       ScaffoldMessenger.of(context).
+                //       showSnackBar(const SnackBar(content: Text('The two passwords '
+                //           'do not match.')));
+                //     } else {
+                //       Navigator.pop(context);
+                //     }
+                //   },
+                //   child: const Text('Confirm',
+                //       style: TextStyle(
+                //           color: Colors.white,
+                //           fontSize: 30
+                //       )
+                //   ),
+                // ),
               ],
             ),
           ],

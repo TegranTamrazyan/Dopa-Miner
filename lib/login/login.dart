@@ -127,20 +127,20 @@ class _LoginPageState extends State<LoginPage> {
         ),
       );
     } on FirebaseAuthException catch (e) {
-      String message = "Login failed.";
+      errorMessage = "Login failed.";
 
       if (e.code == "user-not-found") {
-        message = "No account found with this email.";
+        errorMessage = "No account found with this email.";
       } else if (e.code == "wrong-password") {
-        message = "Incorrect password.";
+        errorMessage = "Incorrect password.";
       } else if (e.code == "invalid-email") {
-        message = "Invalid email.";
+        errorMessage = "Invalid email.";
       } else if (e.code == "invalid-credential") {
-        message = "Incorrect email or password.";
+        errorMessage = "Incorrect email or password.";
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
+        SnackBar(content: Text(errorMessage)),
       );
     }
   }
@@ -238,14 +238,6 @@ class _LoginPageState extends State<LoginPage> {
                    !inputFormatCheck(password.text)) {
                   errorSnack();
                 } else {
-                  //Navigator.push(
-                  //  context,
-                  //  MaterialPageRoute(
-                  //    builder: (context) => ValidatePage(
-                  //      email: email.text
-                  //    ),
-                  // ),
-                  //);
                   loginUser();
                 }
               },
