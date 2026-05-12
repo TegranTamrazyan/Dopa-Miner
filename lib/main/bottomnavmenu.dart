@@ -15,47 +15,49 @@ class GamePage extends StatefulWidget {
 
 class _GamePageState extends State<GamePage> {
   int _selectedIndex = 0;
-  static List<String> urlsList = ["https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",];
 
-  List<Widget> _widgetOptions = <Widget>[
-    profilePage(),
-    leaderboardPage(),
-    flappyPage(),
-    wordlePage(),
-    cookiePage()
+  final List<Widget> _widgetOptions = <Widget>[
+    const profilePage(),
+    const leaderboardPage(),
+    const flappyPage(),
+    const wordlePage(),
+    const cookiePage()
   ];
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _widgetOptions[_selectedIndex],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _widgetOptions,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
               icon: Icon(Icons.person),
               label: "",
-              backgroundColor: Colors.blueAccent,
+              backgroundColor: Colors.pinkAccent,
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
               icon: Icon(Icons.leaderboard),
               label: "",
-              backgroundColor: Colors.blueAccent
+              backgroundColor: Colors.pinkAccent
           ),
           BottomNavigationBarItem(
               icon: Image.asset("./assets/flappy.png", width: 40, height: 40,),
               label: "",
-              backgroundColor: Colors.blueAccent
+              backgroundColor: Colors.blue
           ),
           BottomNavigationBarItem(
               icon: Image.asset("./assets/wordle.png", width: 40, height: 40,),
               label: "",
-              backgroundColor: Colors.blueAccent
+              backgroundColor: Colors.grey.shade200
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
               icon: Icon(Icons.cookie),
               label: "",
-              backgroundColor: Colors.blueAccent
+              backgroundColor: Colors.blue
           ),
         ],
         elevation: 0,

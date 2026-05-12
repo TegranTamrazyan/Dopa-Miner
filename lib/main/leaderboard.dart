@@ -26,7 +26,9 @@ class _leaderboardPageState extends State<leaderboardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text("Leaderboards", style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),),
           ],
@@ -184,12 +186,8 @@ class _leaderboardPageState extends State<leaderboardPage> {
         width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.grey.shade100,
+          color: Colors.blueGrey.shade50,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: Colors.black,
-            width: 2,
-          ),
         ),
         child: Column(
           children: [

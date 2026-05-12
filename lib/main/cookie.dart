@@ -221,23 +221,20 @@ class _cookiePageState extends State<cookiePage> {
             return Positioned(
               left: cookie.x,
               top: cookie.y,
-              child: SizedBox(
-                width: 40,
-                height: 40,
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      cookieCount += fallingCookiesReward!;
-                    });
-                    removeCookie(cookie);
-                  },
-                  child: Image.asset(
-                    "assets/cookie.png",
-                    width: 80,
-                    height: 80,
-                  ),
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {
+                    cookieCount += fallingCookiesReward!;
+                  });
+                  removeCookie(cookie);
+                },
+                child: Image.asset(
+                  "assets/cookie.png",
+                  width: 50,
+                  height: 50,
                 ),
               ),
+
             );
           }),
           ...floatingClickMessages.map((text) {

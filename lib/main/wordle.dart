@@ -61,28 +61,30 @@ class _wordlePageState extends State<wordlePage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      body: Center(
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 60,
-            ),
-            Container(
-              child: createAllBoxes(),
-            ),
-            const SizedBox(
-              height: 85,
-            ),
-            Container(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: createAllKeyboardLetterBoxes(),
+      body: Container(
+        color: Colors.grey.shade200,
+        child: Center(
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 60,
               ),
-
-            ),
-          ],
+              Container(
+                child: createAllBoxes(),
+              ),
+              const SizedBox(
+                height: 85,
+              ),
+              Container(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: createAllKeyboardLetterBoxes(),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
+      )
     );
   }
 
