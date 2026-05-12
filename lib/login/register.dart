@@ -169,8 +169,8 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
         ),
         child: Column(
           children: [
-            SizedBox(height: 60),
-            const Text('Create a Dopa-Miner Account',
+            const SizedBox(height: 60),
+            const Text('Create an Account',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: Colors.pinkAccent,
@@ -263,6 +263,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                                     return null;
                                   }
                                 },
+                                obscureText: true,
                                 decoration: const InputDecoration(
                                   labelText: "Password",
                                   labelStyle: TextStyle(color: Colors.pinkAccent),
@@ -271,6 +272,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                               const SizedBox(height: 5),
                               TextField(
                                 controller: verif,
+                                obscureText: true,
                                 decoration: const InputDecoration(
                                   labelText: "Confirm password",
                                   labelStyle: TextStyle(color: Colors.pinkAccent),
@@ -297,6 +299,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                   ),
                   onPressed: (){
                     if(isStepTwo){
+                      FocusScope.of(context).unfocus();
                       setState(() {
                         animationColor();
                         isStepTwo = !isStepTwo;
@@ -326,6 +329,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text(errorMessage)));
                         } else {
+                          FocusScope.of(context).unfocus();
                           setState(() {
                             animationColor();
                             isStepTwo = !isStepTwo;
