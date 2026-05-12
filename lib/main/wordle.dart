@@ -47,8 +47,10 @@ class _wordlePageState extends State<wordlePage> {
       [BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""), BoxSettings(Colors.white, "")],
       [BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""),BoxSettings(Colors.white, ""), BoxSettings(Colors.white, ""), BoxSettings(Colors.white, "")]
     ];
-    
+
     loadWords().then((words){
+      if (!mounted) return;
+
       setState(() {
         wordList.addAll(words);
         answerWord = getRandomWord();
@@ -61,30 +63,30 @@ class _wordlePageState extends State<wordlePage> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      body: Container(
-        color: Colors.grey.shade200,
-        child: Center(
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 60,
-              ),
-              Container(
-                child: createAllBoxes(),
-              ),
-              const SizedBox(
-                height: 85,
-              ),
-              Container(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: createAllKeyboardLetterBoxes(),
+        body: Container(
+          color: Colors.grey.shade200,
+          child: Center(
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 60,
                 ),
-              ),
-            ],
+                Container(
+                  child: createAllBoxes(),
+                ),
+                const SizedBox(
+                  height: 85,
+                ),
+                Container(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: createAllKeyboardLetterBoxes(),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      )
+        )
     );
   }
 
@@ -234,13 +236,15 @@ class _wordlePageState extends State<wordlePage> {
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: color,
+            backgroundColor: color,
             padding: EdgeInsets.zero,
-          shadowColor: Colors.transparent,
+            shadowColor: Colors.transparent,
             overlayColor: Colors.transparent,
             splashFactory: NoSplash.splashFactory
         ),
         onPressed: () {
+          if (gameOver || answerWord == null || onGuessWordNumber >= 6) return;
+
           setState(() {
 
             if(listOfWordsLetters[onGuessWordNumber][0].letter == ""){
@@ -265,7 +269,7 @@ class _wordlePageState extends State<wordlePage> {
       ),
     );
   }
-  //10 9 7
+
   Container createAllKeyboardLetterBoxes(){
     return Container(
       child: Column(
@@ -338,80 +342,89 @@ class _wordlePageState extends State<wordlePage> {
                 ),
                 child: ElevatedButton(
 
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey,
-                      padding: EdgeInsets.zero,
-                      shadowColor: Colors.transparent,
-                      overlayColor: Colors.transparent,
-                      splashFactory: NoSplash.splashFactory
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      String word = "${listOfWordsLetters[onGuessWordNumber][0].letter}${listOfWordsLetters[onGuessWordNumber][1].letter}${listOfWordsLetters[onGuessWordNumber][2].letter}${listOfWordsLetters[onGuessWordNumber][3].letter}${listOfWordsLetters[onGuessWordNumber][4].letter}";
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey,
+                        padding: EdgeInsets.zero,
+                        shadowColor: Colors.transparent,
+                        overlayColor: Colors.transparent,
+                        splashFactory: NoSplash.splashFactory
+                    ),
+                    onPressed: () {
+                      if (gameOver || answerWord == null || onGuessWordNumber >= 6) return;
 
-                      if (listOfWordsLetters[onGuessWordNumber][4].letter == ""){
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Missing Letters!')));
-                      }
-                      else if (!wordList.contains(word)){
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Not a Word!')));
-                      }
-                      else {
-                        String? answerWordForYellowAmounts = answerWord;
+                      setState(() {
+                        String word = "${listOfWordsLetters[onGuessWordNumber][0].letter}${listOfWordsLetters[onGuessWordNumber][1].letter}${listOfWordsLetters[onGuessWordNumber][2].letter}${listOfWordsLetters[onGuessWordNumber][3].letter}${listOfWordsLetters[onGuessWordNumber][4].letter}";
 
-                        for(int i = 0; i < word.length; i++) {
-                          if (listOfWordsLetters[onGuessWordNumber][i].letter == answerWord![i]) {
-                            listOfWordsLetters[onGuessWordNumber][i].color = Colors.green;
-                            listOfLetters.firstWhere((key) => key.letter == word[i]).color = Colors.green;
-                            answerWordForYellowAmounts = answerWordForYellowAmounts!.replaceFirst("${listOfWordsLetters[onGuessWordNumber][i].letter}", "");
-                          }
+                        if (listOfWordsLetters[onGuessWordNumber][4].letter == ""){
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Missing Letters!')));
                         }
-
-                        for(int i = 0; i < word.length; i++) {
-
-                          if (listOfWordsLetters[onGuessWordNumber][i].color == Colors.green) {
-                            continue;
-                          }
-
-                          if(answerWordForYellowAmounts!.contains("${listOfWordsLetters[onGuessWordNumber][i].letter}")){
-
-                            listOfWordsLetters[onGuessWordNumber][i].color = Colors.yellow;
-
-                            answerWordForYellowAmounts = answerWordForYellowAmounts.replaceFirst("${listOfWordsLetters[onGuessWordNumber][i].letter}", "");
-
-                            if(listOfLetters.firstWhere((key) => key.letter == word[i]).color != Colors.green){
-                              listOfLetters.firstWhere((key) => key.letter == word[i]).color = Colors.yellow;
-                            }
-                          }
-                          else {
-                            listOfWordsLetters[onGuessWordNumber][i].color = Colors.grey;
-
-                            if(listOfLetters.firstWhere((key) => key.letter == word[i]).color != Colors.green){
-                              listOfLetters.firstWhere((key) => key.letter == word[i]).color = Colors.grey;
-                            }
-
-                          }
-                        }
-
-                        if (word == answerWord) {
-                          onGuessWordNumber++;
-                          guessedWordsAmount++;
-                          saveWordleStats();
-
-                          showGameResultPopup("You Win!", "The word was $answerWord.",);
-
-                        }
-                        else if (onGuessWordNumber == 5) {
-                          onGuessWordNumber++;
-                          showGameResultPopup("You Lose!", "The word was $answerWord.",);
+                        else if (!wordList.contains(word)){
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Not a Word!')));
                         }
                         else {
-                          onGuessWordNumber++;
-                        }
+                          String? answerWordForYellowAmounts = answerWord;
 
-                      }
-                    });
-                  },
-                  child: const Text("Enter", style: TextStyle(color: Colors.black))),
+                          for(int i = 0; i < word.length; i++) {
+                            if (listOfWordsLetters[onGuessWordNumber][i].letter == answerWord![i]) {
+                              listOfWordsLetters[onGuessWordNumber][i].color = Colors.green;
+                              listOfLetters.firstWhere((key) => key.letter == word[i]).color = Colors.green;
+                              answerWordForYellowAmounts = answerWordForYellowAmounts!.replaceFirst("${listOfWordsLetters[onGuessWordNumber][i].letter}", "");
+                            }
+                          }
+
+                          for(int i = 0; i < word.length; i++) {
+
+                            if (listOfWordsLetters[onGuessWordNumber][i].color == Colors.green) {
+                              continue;
+                            }
+
+                            if(answerWordForYellowAmounts!.contains("${listOfWordsLetters[onGuessWordNumber][i].letter}")){
+
+                              listOfWordsLetters[onGuessWordNumber][i].color = Colors.yellow;
+
+                              answerWordForYellowAmounts = answerWordForYellowAmounts.replaceFirst("${listOfWordsLetters[onGuessWordNumber][i].letter}", "");
+
+                              if(listOfLetters.firstWhere((key) => key.letter == word[i]).color != Colors.green){
+                                listOfLetters.firstWhere((key) => key.letter == word[i]).color = Colors.yellow;
+                              }
+                            }
+                            else {
+                              listOfWordsLetters[onGuessWordNumber][i].color = Colors.grey;
+
+                              if(listOfLetters.firstWhere((key) => key.letter == word[i]).color != Colors.green){
+                                listOfLetters.firstWhere((key) => key.letter == word[i]).color = Colors.grey;
+                              }
+
+                            }
+                          }
+
+                          if (word == answerWord) {
+                            onGuessWordNumber++;
+                            guessedWordsAmount++;
+                            gameOver = true;
+                            saveWordleStats();
+
+                            Future.delayed(Duration.zero, () {
+                              showGameResultPopup("You Win!", "The word was $answerWord.");
+                            });
+
+                          }
+                          else if (onGuessWordNumber == 5) {
+                            onGuessWordNumber++;
+                            gameOver = true;
+
+                            Future.delayed(Duration.zero, () {
+                              showGameResultPopup("You Lose!", "The word was $answerWord.");
+                            });
+                          }
+                          else {
+                            onGuessWordNumber++;
+                          }
+
+                        }
+                      });
+                    },
+                    child: const Text("Enter", style: TextStyle(color: Colors.black))),
               ),
               const SizedBox(width: 5,),
               createKeyboardLetterBox(listOfLetters[19]),
@@ -449,6 +462,8 @@ class _wordlePageState extends State<wordlePage> {
                       splashFactory: NoSplash.splashFactory
                   ),
                   onPressed: () {
+                    if (gameOver || answerWord == null || onGuessWordNumber >= 6) return;
+
                     setState(() {
                       if(listOfWordsLetters[onGuessWordNumber][4].letter != ""){
                         listOfWordsLetters[onGuessWordNumber][4].letter = "";
@@ -475,7 +490,12 @@ class _wordlePageState extends State<wordlePage> {
       ),
     );
   }
+
   String getRandomWord() {
+    if (wordList.isEmpty) {
+      return "";
+    }
+
     final random = Random();
     return wordList.elementAt(random.nextInt(wordList.length));
   }
@@ -486,6 +506,8 @@ class _wordlePageState extends State<wordlePage> {
     if (data == null) return;
 
     final wordleData = data["wordle"] ?? {};
+
+    if (!mounted) return;
 
     setState(() {
       guessedWordsAmount = wordleData["guessedWordsAmount"] ?? 0;
@@ -524,7 +546,7 @@ class _wordlePageState extends State<wordlePage> {
   }
 
   void showGameResultPopup(String title, String message) {
-    gameOver = true;
+    if (!mounted) return;
 
     showDialog(
       context: context,
@@ -560,7 +582,7 @@ Future<List<String>> loadWords() async {
   List<String> words = data.split('\n');
 
   words = words
-      .map((w) => w.trim())
+      .map((w) => w.trim().toUpperCase())
       .where((w) => w.length == 5)
       .toList();
 

@@ -230,8 +230,8 @@ class _cookiePageState extends State<cookiePage> {
                 },
                 child: Image.asset(
                   "assets/cookie.png",
-                  width: 50,
-                  height: 50,
+                  width: 60,
+                  height: 60,
                 ),
               ),
 
