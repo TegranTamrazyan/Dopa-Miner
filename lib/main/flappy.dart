@@ -27,6 +27,8 @@ class _flappyPageState extends State<flappyPage> {
 
   List<Pillar> easyPillars = [];
 
+  bool reversedGravity = false;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -53,11 +55,24 @@ class _flappyPageState extends State<flappyPage> {
       if (!mounted || gameOver || !gameStarted) return;
 
       setState(() {
+        bool shouldReverseGravity = false;
+
         for (var pillar in easyPillars) {
           if (pillar.x <= bird.x && !pillar.scored) {
             score++;
             pillar.scored = true;
+
+
+            if (score % 10 == 0 && pillar.scored) {
+              shouldReverseGravity = true;
+            }
           }
+        }
+
+        if (shouldReverseGravity) {
+          easyPillars.clear();
+          reversedGravity = !reversedGravity;
+          bird.velocity = 0;
         }
 
         easyPillars.removeWhere((pillar) => pillar.x <= -pillar.width);
@@ -68,8 +83,14 @@ class _flappyPageState extends State<flappyPage> {
       if (!mounted || gameOver || !gameStarted) return;
 
       setState(() {
-        bird.velocity += bird.gravity;
+        if (reversedGravity) {
+          bird.velocity -= bird.gravity;
+        } else {
+          bird.velocity += bird.gravity;
+        }
+
         bird.y += bird.velocity;
+
 
         for (var pillar in easyPillars) {
           pillar.x -= MediaQuery.of(context).size.width * 0.005;
@@ -79,9 +100,8 @@ class _flappyPageState extends State<flappyPage> {
       checkCollision();
     });
 
-    pillarSpawnTimer = Timer.periodic(const Duration(milliseconds: 4400), (timer) {
+    pillarSpawnTimer = Timer.periodic(const Duration(milliseconds: 3250), (timer) {
       if (!mounted || gameOver || !gameStarted) return;
-
       spawnRandomPillar();
     });
   }
@@ -111,7 +131,7 @@ class _flappyPageState extends State<flappyPage> {
             ),
           ),
           ...easyPillars.expand((pillar) => spawnPillar(pillar, MediaQuery.of(context).size.height)),
-          spawnBird(bird),
+          spawnBird(bird, reversedGravity),
 
           if (!gameStarted && !gameOver)
             const Center(
@@ -155,7 +175,12 @@ class _flappyPageState extends State<flappyPage> {
 
               setState(() {
                 gameStarted = true;
-                bird.velocity = -8.5;
+
+                if (reversedGravity){
+                  bird.velocity = 7.5;
+                } else {
+                  bird.velocity = -7.5;
+                }
               });
             },
             child: Container(),
@@ -214,11 +239,13 @@ class _flappyPageState extends State<flappyPage> {
 
     setState(() {
       gameOver = true;
+      reversedGravity = false;
 
       if (score > highScore) {
         highScore = score;
         saveFlappyBirdData();
       }
+
     });
 
     showDialog(
@@ -249,6 +276,7 @@ class _flappyPageState extends State<flappyPage> {
       score = 0;
       gameOver = false;
       gameStarted = false;
+      reversedGravity = false;
       easyPillars.clear();
 
       bird = Bird(
@@ -279,20 +307,31 @@ class _flappyPageState extends State<flappyPage> {
   }
 }
 
-Positioned spawnBird(Bird bird) {
-  double angle = bird.velocity * 0.1;
+Positioned spawnBird(Bird bird, bool reversedGravity) {
+  double angle;
+
+  if (reversedGravity) {
+    angle = -bird.velocity * 0.1;
+  } else {
+    angle = bird.velocity * 0.1;
+  }
+
+
   angle = angle.clamp(-1.25, 1.25);
 
   return Positioned(
     left: bird.x,
     top: bird.y,
     child: SizedBox(
-      child: Transform.rotate(
-        angle: angle,
-        child: Image.asset(
-          "assets/flappy.png",
-          width: bird.width,
-          height: bird.height,
+      child: Transform.scale(
+        scaleY: reversedGravity ? -1 : 1,
+        child: Transform.rotate(
+          angle: angle,
+          child: Image.asset(
+            "assets/flappy.png",
+            width: bird.width,
+            height: bird.height,
+          ),
         ),
       ),
     ),
