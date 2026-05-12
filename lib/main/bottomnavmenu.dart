@@ -52,7 +52,7 @@ class _GamePageState extends State<GamePage> {
           BottomNavigationBarItem(
               icon: Image.asset("./assets/wordle.png", width: 40, height: 40,),
               label: "",
-              backgroundColor: Colors.grey.shade200
+              backgroundColor: Colors.grey
           ),
           const BottomNavigationBarItem(
               icon: Icon(Icons.cookie),
