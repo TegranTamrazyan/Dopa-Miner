@@ -309,13 +309,27 @@ class _leaderboardPageState extends State<leaderboardPage> {
   Future<List<Map<String, dynamic>>> getCookieClickerTopCookieCounts() async{
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection("users")
-        .orderBy("cookieClicker.cookieCount", descending: true)
-        .limit(3)
         .get();
 
-    return querySnapshot.docs.map((doc){
+    List<Map<String, dynamic>> users = querySnapshot.docs.map((doc){
       return doc.data() as Map<String, dynamic>;
     }).toList();
+
+    users.sort((a,b) {
+      final dataUserA = a["cookieClicker"] ?? {};
+      final dataUserB = b["cookieClicker"] ?? {};
+
+      final cookieCountA = dataUserA["cookieCount"]?.toString() ?? "0";
+      final cookieCountB = dataUserB["cookieCount"]?.toString() ?? "0";
+
+      final convertedCookiesA = BigInt.tryParse(cookieCountA) ?? BigInt.zero;
+      final convertedCookiesB = BigInt.tryParse(cookieCountB) ?? BigInt.zero;
+
+      return convertedCookiesB.compareTo(convertedCookiesA);
+
+    });
+    
+    return users.take(3).toList();
   }
 
   Future<List<Map<String, dynamic>>> getFlappyBirdTopScores() async{
@@ -352,7 +366,7 @@ class _leaderboardPageState extends State<leaderboardPage> {
     if (users.length <= index) return "0";
 
     final cookieClicker = users[index]["cookieClicker"] ?? {};
-    return displayCookieInMoneyFormat(BigInt.parse(cookieClicker["cookieCount"])) ?? "0";
+    return displayCookieInMoneyFormat(BigInt.parse(cookieClicker["cookieCount"]));
   }
 
   int getFlappyScore(List<Map<String, dynamic>> users, int index) {
